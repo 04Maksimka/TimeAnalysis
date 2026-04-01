@@ -1,0 +1,390 @@
+[
+  {
+    "objectID": "research/signal_analysis/fourier_transform.html",
+    "href": "research/signal_analysis/fourier_transform.html",
+    "title": "Fourier Analysis of Price Signals",
+    "section": "",
+    "text": "Status: 🟡 Draft — results are preliminary",
+    "crumbs": [
+      "Research",
+      "Fourier Analysis of Price Signals"
+    ]
+  },
+  {
+    "objectID": "research/signal_analysis/fourier_transform.html#objective",
+    "href": "research/signal_analysis/fourier_transform.html#objective",
+    "title": "Fourier Analysis of Price Signals",
+    "section": "Objective",
+    "text": "Objective\nWe want to answer: do financial price series contain stable, exploitable periodic components?\nThis article applies the DFT algorithm to a synthetic price series that mimics realistic market behaviour and evaluates what we can and cannot detect.",
+    "crumbs": [
+      "Research",
+      "Fourier Analysis of Price Signals"
+    ]
+  },
+  {
+    "objectID": "research/signal_analysis/fourier_transform.html#setup",
+    "href": "research/signal_analysis/fourier_transform.html#setup",
+    "title": "Fourier Analysis of Price Signals",
+    "section": "Setup",
+    "text": "Setup\n\nimport numpy as np\nimport pandas as pd\nimport plotly.express as px\n\nrng = np.random.default_rng(0)\nN = 256  # trading days",
+    "crumbs": [
+      "Research",
+      "Fourier Analysis of Price Signals"
+    ]
+  },
+  {
+    "objectID": "research/signal_analysis/fourier_transform.html#generating-a-realistic-price-series",
+    "href": "research/signal_analysis/fourier_transform.html#generating-a-realistic-price-series",
+    "title": "Fourier Analysis of Price Signals",
+    "section": "Generating a realistic price series",
+    "text": "Generating a realistic price series\nWe start from a log-return model. Daily log-returns are drawn from a normal distribution, with a small embedded seasonal component at a 10-day cycle:\n\\[\nr_t = \\mu + \\sigma \\epsilon_t + A \\sin\\!\\left(\\frac{2\\pi t}{T}\\right)\n\\]\nwhere \\(\\epsilon_t \\sim \\mathcal{N}(0,1)\\), \\(\\mu = 0.0002\\), \\(\\sigma = 0.01\\), \\(A = 0.003\\), \\(T = 10\\).\n\nmu, sigma, A, T_cycle = 0.0002, 0.01, 0.003, 10\nt = np.arange(N)\nreturns = mu + sigma * rng.standard_normal(N) + A * np.sin(2 * np.pi * t / T_cycle)\nprices = 100 * np.exp(np.cumsum(returns))\n\ndf = pd.DataFrame({\"day\": t, \"price\": prices, \"return\": returns})\nfig = px.line(df, x=\"day\", y=\"price\", title=\"Simulated price series\",\n              template=\"simple_white\", labels={\"price\": \"Price (USD)\", \"day\": \"Trading day\"})\nfig.show()",
+    "crumbs": [
+      "Research",
+      "Fourier Analysis of Price Signals"
+    ]
+  },
+  {
+    "objectID": "research/signal_analysis/fourier_transform.html#power-spectrum",
+    "href": "research/signal_analysis/fourier_transform.html#power-spectrum",
+    "title": "Fourier Analysis of Price Signals",
+    "section": "Power spectrum",
+    "text": "Power spectrum\n\nX = np.fft.rfft(returns)\nfreqs = np.fft.rfftfreq(N, d=1.0)\npower = np.abs(X) ** 2 / N\n\n# Skip DC component (freq=0)\nmask = freqs &gt; 0\nperiod = 1 / freqs[mask]\npsd = pd.DataFrame({\"period_days\": period, \"power\": power[mask]})\n\nfig = px.line(psd, x=\"period_days\", y=\"power\", log_x=True,\n              title=\"Power spectrum — period domain\",\n              labels={\"period_days\": \"Period (days)\", \"power\": \"Power\"},\n              template=\"simple_white\")\nfig.add_vline(x=T_cycle, line_dash=\"dash\", line_color=\"red\",\n              annotation_text=f\"planted cycle ({T_cycle}d)\")\nfig.show()",
+    "crumbs": [
+      "Research",
+      "Fourier Analysis of Price Signals"
+    ]
+  },
+  {
+    "objectID": "research/signal_analysis/fourier_transform.html#findings",
+    "href": "research/signal_analysis/fourier_transform.html#findings",
+    "title": "Fourier Analysis of Price Signals",
+    "section": "Findings",
+    "text": "Findings\nThe planted 10-day cycle is visible in the spectrum but its signal-to-noise ratio is low (\\(A/\\sigma \\approx 0.3\\)). This illustrates a key challenge for financial spectral analysis:\n\nNoise dominates: real returns have \\(\\sigma \\gg A\\) for any realistic cycle amplitude.\nNon-stationarity: the cycle amplitude and phase may drift over time, smearing the peak.\n\n\nNext steps\n\nApply a Hann window before the DFT to reduce spectral leakage\nCompare with STFT for non-stationary analysis\nTest on real OHLCV data from a free API (e.g. Yahoo Finance)",
+    "crumbs": [
+      "Research",
+      "Fourier Analysis of Price Signals"
+    ]
+  },
+  {
+    "objectID": "quickstart/setup.html",
+    "href": "quickstart/setup.html",
+    "title": "Environment Setup",
+    "section": "",
+    "text": "git clone https://github.com/YOUR_USERNAME/timeanalysis.git\ncd timeanalysis",
+    "crumbs": [
+      "Quick Start",
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "quickstart/setup.html#clone-the-repository",
+    "href": "quickstart/setup.html#clone-the-repository",
+    "title": "Environment Setup",
+    "section": "",
+    "text": "git clone https://github.com/YOUR_USERNAME/timeanalysis.git\ncd timeanalysis",
+    "crumbs": [
+      "Quick Start",
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "quickstart/setup.html#create-a-virtual-environment",
+    "href": "quickstart/setup.html#create-a-virtual-environment",
+    "title": "Environment Setup",
+    "section": "2. Create a virtual environment",
+    "text": "2. Create a virtual environment\npython -m venv .venv\nsource .venv/bin/activate      # macOS / Linux\n# .venv\\Scripts\\activate       # Windows PowerShell",
+    "crumbs": [
+      "Quick Start",
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "quickstart/setup.html#install-dependencies",
+    "href": "quickstart/setup.html#install-dependencies",
+    "title": "Environment Setup",
+    "section": "3. Install dependencies",
+    "text": "3. Install dependencies\npip install \".[dev]\"\n\n\n\n\n\n\nNote\n\n\n\nThe requirements.txt pins exact versions so every team member runs the same code.",
+    "crumbs": [
+      "Quick Start",
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "quickstart/setup.html#verify-the-installation",
+    "href": "quickstart/setup.html#verify-the-installation",
+    "title": "Environment Setup",
+    "section": "4. Verify the installation",
+    "text": "4. Verify the installation\nimport numpy as np\nimport pandas as pd\nimport plotly.express as px\n\nprint(\"All good! ✅\")",
+    "crumbs": [
+      "Quick Start",
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "quickstart/setup.html#pyproject.toml-reference",
+    "href": "quickstart/setup.html#pyproject.toml-reference",
+    "title": "Environment Setup",
+    "section": "pyproject.toml reference",
+    "text": "pyproject.toml reference\nDependencies are declared in pyproject.toml at the repo root. Core deps (numpy, pandas, torch, scipy, etc.) are under [project] dependencies; dev tools (ruff, pytest, ipykernel, mkdocs) are under [dependency-groups] dev.",
+    "crumbs": [
+      "Quick Start",
+      "Environment Setup"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "TimeAnalysis",
+    "section": "",
+    "text": "We are building an automated trading system capable of winning in more than 60% of cases.\nThis site documents our research journey: from raw signal theory to production-ready algorithms.",
+    "crumbs": [
+      "TimeAnalysis"
+    ]
+  },
+  {
+    "objectID": "index.html#whats-inside",
+    "href": "index.html#whats-inside",
+    "title": "TimeAnalysis",
+    "section": "What’s inside",
+    "text": "What’s inside\n\n\n🚀 Quick Start\nGet your environment running in minutes.\nInstall dependencies, fetch your first market data, and run your first signal transform.\nGet started →\n\n\n📐 Algorithms\nCore signal processing and ML/DL building blocks.\nEach article walks through the math, the code, and the intuition side by side.\nBrowse algorithms →\n\n\n🔬 Research\nExploratory data analysis, experiments, and findings.\nLiving documents updated as the project evolves.\nRead research →",
+    "crumbs": [
+      "TimeAnalysis"
+    ]
+  },
+  {
+    "objectID": "index.html#our-manifesto",
+    "href": "index.html#our-manifesto",
+    "title": "TimeAnalysis",
+    "section": "Our Manifesto",
+    "text": "Our Manifesto\n\n\n\n\n\n\n\nPrinciple\nWhat it means in practice\n\n\n\n\n🌐 English\nAll code, docs, and discussion in English\n\n\n🔍 Code review\nNothing ships without a second pair of eyes\n\n\n🏗️ Product mindset\nWe are building a real commercial product\n\n\n🤖 Honest AI use\nAI for viz & reference only — core logic is ours\n\n\n📖 Clear docs\nReadable by non-professionals",
+    "crumbs": [
+      "TimeAnalysis"
+    ]
+  },
+  {
+    "objectID": "index.html#latest-updates",
+    "href": "index.html#latest-updates",
+    "title": "TimeAnalysis",
+    "section": "Latest updates",
+    "text": "Latest updates\n\n\n\nDate\nTopic\nSection\n\n\n\n\n2026-04-01\nFourier Transform deep-dive\nResearch\n\n\n2026-04-01\nMoving Average implementations\nAlgorithms\n\n\n2026-04-01\nProject setup guide\nQuick Start",
+    "crumbs": [
+      "TimeAnalysis"
+    ]
+  },
+  {
+    "objectID": "algorithms/moving_average.html",
+    "href": "algorithms/moving_average.html",
+    "title": "Moving Averages",
+    "section": "",
+    "text": "\\[\n\\text{SMA}_t(n) = \\frac{1}{n} \\sum_{i=0}^{n-1} x_{t-i}\n\\]\n\nimport numpy as np\n\ndef sma(x: np.ndarray, n: int) -&gt; np.ndarray:\n    \"\"\"Simple moving average with a window of n periods.\"\"\"\n    kernel = np.ones(n) / n\n    return np.convolve(x, kernel, mode=\"valid\")",
+    "crumbs": [
+      "Algorithms",
+      "Moving Averages"
+    ]
+  },
+  {
+    "objectID": "algorithms/moving_average.html#simple-moving-average-sma",
+    "href": "algorithms/moving_average.html#simple-moving-average-sma",
+    "title": "Moving Averages",
+    "section": "",
+    "text": "\\[\n\\text{SMA}_t(n) = \\frac{1}{n} \\sum_{i=0}^{n-1} x_{t-i}\n\\]\n\nimport numpy as np\n\ndef sma(x: np.ndarray, n: int) -&gt; np.ndarray:\n    \"\"\"Simple moving average with a window of n periods.\"\"\"\n    kernel = np.ones(n) / n\n    return np.convolve(x, kernel, mode=\"valid\")",
+    "crumbs": [
+      "Algorithms",
+      "Moving Averages"
+    ]
+  },
+  {
+    "objectID": "algorithms/moving_average.html#exponential-moving-average-ema",
+    "href": "algorithms/moving_average.html#exponential-moving-average-ema",
+    "title": "Moving Averages",
+    "section": "Exponential Moving Average (EMA)",
+    "text": "Exponential Moving Average (EMA)\nThe EMA gives more weight to recent observations via a smoothing factor \\(\\alpha \\in (0,1)\\):\n\\[\n\\text{EMA}_t = \\alpha \\cdot x_t + (1 - \\alpha) \\cdot \\text{EMA}_{t-1}\n\\]\nA common choice is \\(\\alpha = \\dfrac{2}{n+1}\\) for an \\(n\\)-period EMA.\n\ndef ema(x: np.ndarray, n: int) -&gt; np.ndarray:\n    \"\"\"Exponential moving average.\"\"\"\n    alpha = 2 / (n + 1)\n    out = np.empty_like(x, dtype=float)\n    out[0] = x[0]\n    for t in range(1, len(x)):\n        out[t] = alpha * x[t] + (1 - alpha) * out[t - 1]\n    return out\n\n\n\n\n\n\n\nTip\n\n\n\nThe EMA reacts faster to price changes than the SMA because recent data carries more weight. This makes it more useful for short-term signal detection.",
+    "crumbs": [
+      "Algorithms",
+      "Moving Averages"
+    ]
+  },
+  {
+    "objectID": "algorithms/moving_average.html#comparison",
+    "href": "algorithms/moving_average.html#comparison",
+    "title": "Moving Averages",
+    "section": "Comparison",
+    "text": "Comparison\n\n\n\nProperty\nSMA\nEMA\n\n\n\n\nLag\nHigher\nLower\n\n\nNoise sensitivity\nLower\nHigher\n\n\nComputational cost\n\\(\\mathcal{O}(n)\\)\n\\(\\mathcal{O}(1)\\) per step\n\n\nMemory needed\nWindow of \\(n\\) values\nSingle state value",
+    "crumbs": [
+      "Algorithms",
+      "Moving Averages"
+    ]
+  },
+  {
+    "objectID": "algorithms/fourier.html",
+    "href": "algorithms/fourier.html",
+    "title": "Discrete Fourier Transform",
+    "section": "",
+    "text": "Price time series contain overlapping periodic patterns — intraday rhythms, weekly seasonality, news shocks. The Discrete Fourier Transform (DFT) lets us decompose a signal into its constituent frequencies and measure their strength.",
+    "crumbs": [
+      "Algorithms",
+      "Discrete Fourier Transform"
+    ]
+  },
+  {
+    "objectID": "algorithms/fourier.html#motivation",
+    "href": "algorithms/fourier.html#motivation",
+    "title": "Discrete Fourier Transform",
+    "section": "",
+    "text": "Price time series contain overlapping periodic patterns — intraday rhythms, weekly seasonality, news shocks. The Discrete Fourier Transform (DFT) lets us decompose a signal into its constituent frequencies and measure their strength.",
+    "crumbs": [
+      "Algorithms",
+      "Discrete Fourier Transform"
+    ]
+  },
+  {
+    "objectID": "algorithms/fourier.html#the-math",
+    "href": "algorithms/fourier.html#the-math",
+    "title": "Discrete Fourier Transform",
+    "section": "The Math",
+    "text": "The Math\nGiven a discrete signal \\(x_0, x_1, \\dots, x_{N-1}\\), the DFT produces \\(N\\) complex coefficients:\n\\[\nX_k = \\sum_{n=0}^{N-1} x_n \\cdot e^{-i 2\\pi k n / N}, \\quad k = 0, 1, \\dots, N-1\n\\]\nThe power spectrum — how much energy lives at each frequency — is:\n\\[\nP_k = \\frac{|X_k|^2}{N}\n\\]\nThe corresponding frequency for bin \\(k\\) given a sampling rate \\(f_s\\) is:\n\\[\nf_k = \\frac{k \\cdot f_s}{N}\n\\]\n\n\n\n\n\n\nNoteWhy complex numbers?\n\n\n\n\\(e^{-i 2\\pi k n / N} = \\cos(2\\pi k n/N) - i\\sin(2\\pi k n/N)\\). The real part captures cosine components, the imaginary part captures sine components. The magnitude \\(|X_k|\\) tells you the total amplitude regardless of phase.",
+    "crumbs": [
+      "Algorithms",
+      "Discrete Fourier Transform"
+    ]
+  },
+  {
+    "objectID": "algorithms/fourier.html#implementation",
+    "href": "algorithms/fourier.html#implementation",
+    "title": "Discrete Fourier Transform",
+    "section": "Implementation",
+    "text": "Implementation\n\nimport numpy as np\nimport plotly.graph_objects as go\nfrom plotly.subplots import make_subplots\n\ndef dft_power_spectrum(signal: np.ndarray, sample_rate: float = 1.0):\n    \"\"\"\n    Compute the one-sided power spectrum of a real signal.\n\n    Parameters\n    ----------\n    signal      : 1-D array of real values\n    sample_rate : samples per unit time (e.g. 1.0 = one sample per day)\n\n    Returns\n    -------\n    freqs : array of frequencies (cycles per unit time)\n    power : array of power values\n    \"\"\"\n    N = len(signal)\n    X = np.fft.rfft(signal)          # rfft exploits real-valued symmetry → N/2+1 bins\n    freqs = np.fft.rfftfreq(N, d=1 / sample_rate)\n    power = (np.abs(X) ** 2) / N\n    return freqs, power",
+    "crumbs": [
+      "Algorithms",
+      "Discrete Fourier Transform"
+    ]
+  },
+  {
+    "objectID": "algorithms/fourier.html#example-synthetic-price-signal",
+    "href": "algorithms/fourier.html#example-synthetic-price-signal",
+    "title": "Discrete Fourier Transform",
+    "section": "Example: Synthetic price signal",
+    "text": "Example: Synthetic price signal\n\nrng = np.random.default_rng(42)\nN, fs = 512, 1.0          # 512 trading days, 1 sample/day\n\nt = np.arange(N) / fs\nsignal = (\n    np.sin(2 * np.pi * t / 20)   # 20-day cycle\n    + 0.5 * np.sin(2 * np.pi * t / 5)  # 5-day cycle\n    + 0.3 * rng.standard_normal(N)      # noise\n)\n\nfreqs, power = dft_power_spectrum(signal, sample_rate=fs)\n\nfig = make_subplots(rows=2, cols=1,\n                    subplot_titles=(\"Synthetic price signal\", \"Power spectrum\"))\n\nfig.add_trace(go.Scatter(x=t, y=signal, mode=\"lines\", name=\"signal\",\n                         line=dict(color=\"#4361ee\", width=1)), row=1, col=1)\n\nfig.add_trace(go.Scatter(x=1 / freqs[1:], y=power[1:], mode=\"lines\",\n                         name=\"power\", line=dict(color=\"#f72585\")), row=2, col=1)\n\nfig.update_xaxes(title_text=\"Trading day\", row=1)\nfig.update_xaxes(title_text=\"Period (days)\", row=2, type=\"log\")\nfig.update_yaxes(title_text=\"Price\", row=1)\nfig.update_yaxes(title_text=\"Power\", row=2)\nfig.update_layout(height=520, showlegend=False, template=\"simple_white\")\nfig.show()\n\n                            \n                                            \n\n\nThe two peaks at periods 20 and 5 days recover the planted cycles exactly, confirming the implementation is correct.",
+    "crumbs": [
+      "Algorithms",
+      "Discrete Fourier Transform"
+    ]
+  },
+  {
+    "objectID": "algorithms/fourier.html#complexity",
+    "href": "algorithms/fourier.html#complexity",
+    "title": "Discrete Fourier Transform",
+    "section": "Complexity",
+    "text": "Complexity\nThe naïve DFT is \\(\\mathcal{O}(N^2)\\). NumPy uses the Fast Fourier Transform (FFT), which reduces this to \\(\\mathcal{O}(N \\log N)\\) via the Cooley–Tukey algorithm.\n\n\n\n\\(N\\)\nDFT ops\nFFT ops\n\n\n\n\n512\n262 144\n4 608\n\n\n4 096\n16 777 216\n49 152\n\n\n65 536\n4.3 × 10⁹\n1 048 576",
+    "crumbs": [
+      "Algorithms",
+      "Discrete Fourier Transform"
+    ]
+  },
+  {
+    "objectID": "algorithms/fourier.html#key-takeaways",
+    "href": "algorithms/fourier.html#key-takeaways",
+    "title": "Discrete Fourier Transform",
+    "section": "Key takeaways",
+    "text": "Key takeaways\n\nUse np.fft.rfft (not np.fft.fft) for real signals — it’s faster and avoids redundant bins.\nAlways inspect the period axis (\\(1/f\\)), not the raw frequency axis, for financial interpretation.\nThe DFT assumes stationarity. For non-stationary price series, prefer the Short-Time Fourier Transform (STFT) or wavelets — covered in later articles.",
+    "crumbs": [
+      "Algorithms",
+      "Discrete Fourier Transform"
+    ]
+  },
+  {
+    "objectID": "algorithms/index.html",
+    "href": "algorithms/index.html",
+    "title": "Algorithms",
+    "section": "",
+    "text": "Each article here presents a standalone algorithm used in our trading system. The structure is always the same: motivation → math → code → performance.\n\n\n\n\n\n\nTip\n\n\n\nAll code blocks are executable. You can run the full notebook by cloning the repo and following the Quick Start.\n\n\n\n\n\n\n\n\n\n\n\n\n\nDiscrete Fourier Transform\n\n\nDecompose any time series into its frequency components. Full derivation, NumPy implementation, and a real price-signal example.\n\n\n\nApr 1, 2026\n\n\n\n\n\n\n\n\n\n\nMoving Averages\n\n\nSMA, EMA, and WMA — the building blocks of trend-following strategies.\n\n\n\nApr 1, 2026\n\n\n\n\n\n\nNo matching items\n Back to top",
+    "crumbs": [
+      "Algorithms",
+      "Algorithms"
+    ]
+  },
+  {
+    "objectID": "appendix/references.html",
+    "href": "appendix/references.html",
+    "title": "References & Further Reading",
+    "section": "",
+    "text": "Oppenheim, A. V., & Schafer, R. W. (2009). Discrete-Time Signal Processing (3rd ed.). Prentice Hall.\nProakis, J. G., & Manolakis, D. G. (2006). Digital Signal Processing. Prentice Hall.",
+    "crumbs": [
+      "References & Further Reading"
+    ]
+  },
+  {
+    "objectID": "appendix/references.html#signal-processing",
+    "href": "appendix/references.html#signal-processing",
+    "title": "References & Further Reading",
+    "section": "",
+    "text": "Oppenheim, A. V., & Schafer, R. W. (2009). Discrete-Time Signal Processing (3rd ed.). Prentice Hall.\nProakis, J. G., & Manolakis, D. G. (2006). Digital Signal Processing. Prentice Hall.",
+    "crumbs": [
+      "References & Further Reading"
+    ]
+  },
+  {
+    "objectID": "appendix/references.html#machine-learning-for-finance",
+    "href": "appendix/references.html#machine-learning-for-finance",
+    "title": "References & Further Reading",
+    "section": "Machine Learning for Finance",
+    "text": "Machine Learning for Finance\n\nLópez de Prado, M. (2018). Advances in Financial Machine Learning. Wiley.\nChan, E. (2013). Algorithmic Trading: Winning Strategies and Their Rationale. Wiley.",
+    "crumbs": [
+      "References & Further Reading"
+    ]
+  },
+  {
+    "objectID": "appendix/references.html#python-libraries",
+    "href": "appendix/references.html#python-libraries",
+    "title": "References & Further Reading",
+    "section": "Python Libraries",
+    "text": "Python Libraries\n\nNumPy FFT documentation\nSciPy signal processing\nPlotly Python\nQuarto documentation",
+    "crumbs": [
+      "References & Further Reading"
+    ]
+  },
+  {
+    "objectID": "quickstart/index.html",
+    "href": "quickstart/index.html",
+    "title": "Quick Start",
+    "section": "",
+    "text": "This section gets you from zero to a working local environment with market data flowing and your first signal transform running.",
+    "crumbs": [
+      "Quick Start",
+      "Quick Start"
+    ]
+  },
+  {
+    "objectID": "quickstart/index.html#prerequisites",
+    "href": "quickstart/index.html#prerequisites",
+    "title": "Quick Start",
+    "section": "Prerequisites",
+    "text": "Prerequisites\n\nPython 3.11+\nGit\nA terminal (PowerShell, bash, or zsh)",
+    "crumbs": [
+      "Quick Start",
+      "Quick Start"
+    ]
+  },
+  {
+    "objectID": "quickstart/index.html#steps",
+    "href": "quickstart/index.html#steps",
+    "title": "Quick Start",
+    "section": "Steps",
+    "text": "Steps\n\nEnvironment Setup — clone the repo, create a virtual environment, install dependencies\nFetch your first dataset (coming soon)\nRun your first Fourier transform (coming soon)",
+    "crumbs": [
+      "Quick Start",
+      "Quick Start"
+    ]
+  },
+  {
+    "objectID": "research/index.html",
+    "href": "research/index.html",
+    "title": "Research",
+    "section": "",
+    "text": "Research articles are living documents — they evolve as we learn more. Each one has a status badge so you know how mature the work is.\n\n\n\nStatus\nMeaning\n\n\n\n\n🟡 Draft\nEarly exploration, results may change\n\n\n🔵 Review\nReady for team review\n\n\n🟢 Published\nStable and peer-reviewed internally\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFourier Analysis of Price Signals\n\n\n\nsignal-analysis\n\nEDA\n\n\n\nApplying the DFT to synthetic and real price data to identify dominant market cycles.\n\n\n\nApr 1, 2026\n\n\n\n\n\n\nNo matching items\n Back to top",
+    "crumbs": [
+      "Research",
+      "Research"
+    ]
+  }
+]

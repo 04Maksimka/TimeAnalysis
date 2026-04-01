@@ -1,0 +1,12 @@
+{
+  "hash": "7033e6f341b05b775c6377bac16f313d",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Moving Averages\"\ndescription: \"SMA, EMA, and WMA — the building blocks of trend-following strategies.\"\ndate: 2026-04-01\ncategories: [signal-processing, trend]\n---\n\n## Simple Moving Average (SMA)\n\n$$\n\\text{SMA}_t(n) = \\frac{1}{n} \\sum_{i=0}^{n-1} x_{t-i}\n$$\n\n::: {#d21395cb .cell execution_count=1}\n``` {.python .cell-code}\nimport numpy as np\n\ndef sma(x: np.ndarray, n: int) -> np.ndarray:\n    \"\"\"Simple moving average with a window of n periods.\"\"\"\n    kernel = np.ones(n) / n\n    return np.convolve(x, kernel, mode=\"valid\")\n```\n:::\n\n\n## Exponential Moving Average (EMA)\n\nThe EMA gives more weight to recent observations via a smoothing factor $\\alpha \\in (0,1)$:\n\n$$\n\\text{EMA}_t = \\alpha \\cdot x_t + (1 - \\alpha) \\cdot \\text{EMA}_{t-1}\n$$\n\nA common choice is $\\alpha = \\dfrac{2}{n+1}$ for an $n$-period EMA.\n\n::: {#0a453725 .cell execution_count=2}\n``` {.python .cell-code}\ndef ema(x: np.ndarray, n: int) -> np.ndarray:\n    \"\"\"Exponential moving average.\"\"\"\n    alpha = 2 / (n + 1)\n    out = np.empty_like(x, dtype=float)\n    out[0] = x[0]\n    for t in range(1, len(x)):\n        out[t] = alpha * x[t] + (1 - alpha) * out[t - 1]\n    return out\n```\n:::\n\n\n::: {.callout-tip}\nThe EMA reacts faster to price changes than the SMA because recent data carries\nmore weight. This makes it more useful for short-term signal detection.\n:::\n\n## Comparison\n\n| Property | SMA | EMA |\n|----------|-----|-----|\n| Lag | Higher | Lower |\n| Noise sensitivity | Lower | Higher |\n| Computational cost | $\\mathcal{O}(n)$ | $\\mathcal{O}(1)$ per step |\n| Memory needed | Window of $n$ values | Single state value |\n\n",
+    "supporting": [
+      "moving_average_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}
