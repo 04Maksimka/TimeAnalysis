@@ -1,62 +1,51 @@
 project:
-  type: book
-  output-dir: _book
+  type: website
+  output-dir: _site
 
-book:
+website:
   title: "TimeAnalysis"
-  author: "Maksimka"
-  date: today
   description: |
     A research journal on building an automated trading system —
     covering signal processing, ML/DL algorithms, and market analysis.
 
   favicon: assets/favicon.ico
-
   page-navigation: true
   back-to-top-navigation: true
 
-  repo-url: https://github.com/YOUR_USERNAME/timeanalysis
+  repo-url: https://github.com/04Maksimka/timeanalysis
   repo-actions: [edit, issue]
 
   sidebar:
     style: docked
     background: light
     search: true
+    contents:
+      - index.qmd
+      - section: "Quick Start"
+        contents:
+          - quickstart/index.qmd
+          - quickstart/setup.qmd
+      - section: "Algorithms"
+        contents:
+          - algorithms/index.qmd
+          - algorithms/fourier.qmd
+          - algorithms/moving_average.qmd
+      - section: "Research"
+        contents:
+          - research/index.qmd
+          - research/signal_analysis/fourier_transform.qmd
+      - appendix/references.qmd
 
   navbar:
     background: primary
     search: true
     right:
       - icon: github
-        href: https://github.com/YOUR_USERNAME/timeanalysis
-
-  chapters:
-    - index.qmd
-
-    - part: "🚀 Quick Start"
-      chapters:
-        - quickstart/index.qmd
-        - quickstart/setup.qmd
-
-    - part: "📐 Algorithms"
-      chapters:
-        - algorithms/index.qmd
-        - algorithms/fourier.qmd
-        - algorithms/moving_average.qmd
-
-    - part: "🔬 Research"
-      chapters:
-        - research/index.qmd
-        - research/signal_analysis/fourier_transform.qmd
-
-  appendices:
-    - appendix/references.qmd
+        href: https://github.com/04Maksimka/timeanalysis
 
 format:
   html:
-    theme:
-      light: cosmo
-      dark: darkly
+    theme: cosmo
     code-link: true
     code-copy: true
     code-fold: false
@@ -64,14 +53,12 @@ format:
     toc-depth: 3
     number-sections: false
     highlight-style: github
-    mainfont: "Inter, sans-serif"
-    fontsize: 1rem
-    linestretch: 1.7
     fig-align: center
-    html-math-method: katex   # fast LaTeX rendering
+    html-math-method: katex
 
 execute:
-  freeze: auto                # re-run only changed notebooks
+  python: .venv/Scripts/python.exe
+  freeze: auto
   echo: true
   warning: false
   cache: true

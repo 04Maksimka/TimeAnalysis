@@ -10,16 +10,12 @@ dependencies = [
     # Core data
     "numpy>=2.0",
     "pandas>=2.0",
-
     # Machine Learning
     "scikit-learn>=1.5",
-
     # Deep Learning
     "torch>=2.3",
-
     # Digital Signal Processing
     "scipy>=1.13",
-
     # Visualization
     "matplotlib>=3.9",
     "seaborn>=0.13",
@@ -33,6 +29,9 @@ dev = [
     "ipykernel>=6.0",
     "mkdocs-material>=9.7.6",
     "mkdocs>=1.6.1",
+    "nbformat",
+    "nbclient",
+    "jupyter-cache",
 ]
 
 [tool.ruff]

@@ -19,9 +19,8 @@ source .venv/bin/activate      # macOS / Linux
 ```
 
 ## 3. Install dependencies
-
 ```bash
-pip install -r requirements.txt
+pip install ".[dev]"
 ```
 
 ::: {.callout-note}
@@ -38,14 +37,8 @@ import plotly.express as px
 print("All good! ✅")
 ```
 
-## `requirements.txt` reference
+## `pyproject.toml` reference
 
-```txt
-numpy==1.26.4
-pandas==2.2.2
-scipy==1.13.0
-plotly==5.22.0
-matplotlib==3.9.0
-jupyter==1.0.0
-quarto>=1.4
-```
+Dependencies are declared in `pyproject.toml` at the repo root.
+Core deps (numpy, pandas, torch, scipy, etc.) are under `[project] dependencies`;
+dev tools (ruff, pytest, ipykernel, mkdocs) are under `[dependency-groups] dev`.
