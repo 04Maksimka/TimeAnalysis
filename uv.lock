@@ -1670,6 +1670,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "ipykernel" },
+    { name = "mkdocs" },
     { name = "mkdocs-material" },
     { name = "pytest" },
     { name = "ruff" },
@@ -1690,6 +1691,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "ipykernel", specifier = ">=6.0" },
+    { name = "mkdocs", specifier = ">=1.6.1" },
     { name = "mkdocs-material", specifier = ">=9.7.6" },
     { name = "pytest", specifier = ">=8.0" },
     { name = "ruff", specifier = ">=0.11" },
