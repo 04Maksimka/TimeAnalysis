@@ -20,6 +20,8 @@ To achieve this, our team is building expertise across two domains:
 - Existing products and competitors in this space
 - Micro and macroeconomics
 
+  **Stochastic analysis and Probability**
+
 ## Our Manifesto
 
 - **Language** — We use English for all communication and documentation.
