@@ -8,7 +8,6 @@ website:
     A research journal on building an automated trading system —
     covering signal processing, ML/DL algorithms, and market analysis.
 
-  favicon: assets/favicon.ico
   page-navigation: true
   back-to-top-navigation: true
 
@@ -45,19 +44,10 @@ website:
 
 format:
   html:
-    theme: cosmo
-    code-link: true
-    code-copy: true
-    code-fold: false
+    theme: default
     toc: true
-    toc-depth: 3
-    number-sections: false
-    highlight-style: github
-    fig-align: center
-    html-math-method: katex
 
 execute:
-  python: .venv/Scripts/python.exe
   freeze: auto
   echo: true
   warning: false
