@@ -1,0 +1,19 @@
+---
+title: "Research"
+description: "Exploratory data analysis, experiments, and findings from our ongoing work."
+listing:
+  contents:
+    - signal_analysis/fourier_transform.qmd
+  type: grid
+  sort: "date desc"
+  fields: [title, description, date, categories]
+---
+
+Research articles are **living documents** — they evolve as we learn more.
+Each one has a status badge so you know how mature the work is.
+
+| Status | Meaning |
+|--------|---------|
+| 🟡 Draft | Early exploration, results may change |
+| 🔵 Review | Ready for team review |
+| 🟢 Published | Stable and peer-reviewed internally |

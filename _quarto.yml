@@ -1,0 +1,77 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "TimeAnalysis"
+  author: "Maksimka"
+  date: today
+  description: |
+    A research journal on building an automated trading system —
+    covering signal processing, ML/DL algorithms, and market analysis.
+
+  favicon: assets/favicon.ico
+
+  page-navigation: true
+  back-to-top-navigation: true
+
+  repo-url: https://github.com/YOUR_USERNAME/timeanalysis
+  repo-actions: [edit, issue]
+
+  sidebar:
+    style: docked
+    background: light
+    search: true
+
+  navbar:
+    background: primary
+    search: true
+    right:
+      - icon: github
+        href: https://github.com/YOUR_USERNAME/timeanalysis
+
+  chapters:
+    - index.qmd
+
+    - part: "🚀 Quick Start"
+      chapters:
+        - quickstart/index.qmd
+        - quickstart/setup.qmd
+
+    - part: "📐 Algorithms"
+      chapters:
+        - algorithms/index.qmd
+        - algorithms/fourier.qmd
+        - algorithms/moving_average.qmd
+
+    - part: "🔬 Research"
+      chapters:
+        - research/index.qmd
+        - research/signal_analysis/fourier_transform.qmd
+
+  appendices:
+    - appendix/references.qmd
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+    code-link: true
+    code-copy: true
+    code-fold: false
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    highlight-style: github
+    mainfont: "Inter, sans-serif"
+    fontsize: 1rem
+    linestretch: 1.7
+    fig-align: center
+    html-math-method: katex   # fast LaTeX rendering
+
+execute:
+  freeze: auto                # re-run only changed notebooks
+  echo: true
+  warning: false
+  cache: true

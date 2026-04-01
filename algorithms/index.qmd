@@ -1,0 +1,19 @@
+---
+title: "Algorithms"
+description: "Core signal processing and ML/DL building blocks with full mathematical derivations."
+listing:
+  contents:
+    - fourier.qmd
+    - moving_average.qmd
+  type: grid
+  sort: "date desc"
+  fields: [title, description, date]
+---
+
+Each article here presents a standalone algorithm used in our trading system.
+The structure is always the same: **motivation → math → code → performance**.
+
+::: {.callout-tip}
+All code blocks are executable. You can run the full notebook by cloning the repo
+and following the [Quick Start](../quickstart/index.qmd).
+:::

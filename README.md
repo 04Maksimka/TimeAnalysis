@@ -27,3 +27,4 @@ To achieve this, our team is building expertise across two domains:
 - **Product mindset** — We are building a real, commercial product — not an educational exercise.
 - **AI usage** — We use AI tools only for visualization and as a reference, not for core development.
 - **Documentation** — We write clear, beautiful documentation that can be understood by non-professionals.
+- 

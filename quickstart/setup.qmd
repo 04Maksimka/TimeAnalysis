@@ -1,0 +1,51 @@
+---
+title: "Environment Setup"
+description: "Clone the repository and install all dependencies."
+---
+
+## 1. Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/timeanalysis.git
+cd timeanalysis
+```
+
+## 2. Create a virtual environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate      # macOS / Linux
+# .venv\Scripts\activate       # Windows PowerShell
+```
+
+## 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+::: {.callout-note}
+The `requirements.txt` pins exact versions so every team member runs the same code.
+:::
+
+## 4. Verify the installation
+
+```python
+import numpy as np
+import pandas as pd
+import plotly.express as px
+
+print("All good! ✅")
+```
+
+## `requirements.txt` reference
+
+```txt
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.13.0
+plotly==5.22.0
+matplotlib==3.9.0
+jupyter==1.0.0
+quarto>=1.4
+```
