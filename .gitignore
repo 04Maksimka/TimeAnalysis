@@ -1,2 +1,23 @@
+# IDE
 .idea/
-.vevn/
+
+# Virtual environment (uv-managed)
+.venv/
+
+# uv cache
+.uv/
+
+# Build outputs
+_site/
+_book/
+_freeze/
+
+# Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
