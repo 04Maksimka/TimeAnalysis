@@ -22,6 +22,49 @@ To achieve this, our team is building expertise across two domains:
 
  **Stochastic analysis and Probability**
 
+## Setup
+
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
+
+### Install uv
+
+**Windows (PowerShell):**
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+**macOS / Linux:**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### Install dependencies
+
+```bash
+uv sync --dev
+```
+
+This creates a `.venv` and installs all dependencies. Run once after cloning.
+
+### Run files
+
+```bash
+# Run a Python script
+uv run python script.py
+
+# Run Jupyter
+uv run jupyter notebook
+
+# Run tests
+uv run pytest
+```
+
+No need to activate the virtual environment — `uv run` handles it automatically.
+
+### PyCharm
+
+Set the interpreter to `.venv/Scripts/python.exe` (Windows) or `.venv/bin/python` (macOS/Linux). Jupyter notebooks will work out of the box.
+
 ## Our Manifesto
 
 - **Language** — We use English for all communication and documentation.
