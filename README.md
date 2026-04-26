@@ -65,6 +65,51 @@ No need to activate the virtual environment — `uv run` handles it automaticall
 
 Set the interpreter to `.venv/Scripts/python.exe` (Windows) or `.venv/bin/python` (macOS/Linux). Jupyter notebooks will work out of the box.
 
+## Code style: Ruff
+
+We use [Ruff](https://docs.astral.sh/ruff/) as both linter and formatter. Configuration lives in `pyproject.toml` under `[tool.ruff]`.
+
+### Common commands
+
+```bash
+# Check for lint issues
+uv run ruff check .
+
+# Auto-fix what can be fixed safely
+uv run ruff check --fix .
+
+# Format the codebase
+uv run ruff format .
+
+# Verify formatting without writing changes (used in CI)
+uv run ruff format --check .
+```
+
+Run both before committing:
+
+```bash
+# bash / zsh / PowerShell 7+
+uv run ruff check --fix . && uv run ruff format .
+```
+
+```powershell
+# Windows PowerShell 5.1 (no && operator)
+uv run ruff check --fix .; if ($?) { uv run ruff format . }
+```
+
+### CI
+
+Every push and pull request to `main` runs Ruff via GitHub Actions
+(see `.github/workflows/ruff.yml`). A PR is blocked if either lint or
+format check fails — fix issues locally with the commands above and push again.
+
+### Editor integration
+
+- **PyCharm** — install the official *Ruff* plugin, point it at the project's
+  `.venv` interpreter, and enable "Run ruff on save" and "Use ruff format".
+- **VS Code** — install the *Ruff* extension by Astral; it picks up
+  `pyproject.toml` automatically.
+
 ## Our Manifesto
 
 - **Language** — We use English for all communication and documentation.
