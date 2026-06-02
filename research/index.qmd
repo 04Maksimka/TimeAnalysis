@@ -1,0 +1,18 @@
+---
+title: "Research"
+listing:
+  contents: "posts/*.ipynb"
+  type: grid
+  grid-columns: 3
+  sort: "date desc"
+  categories: true
+  filter-ui: true
+  sort-ui: [date, title]
+  feed: true
+  image-placeholder: "assets/research-placeholder.svg"
+page-layout: full
+---
+
+This page collects reproducible explorations for the TimeAnalysis project.
+Each card is generated automatically from a Jupyter notebook committed to
+`research/posts/`.

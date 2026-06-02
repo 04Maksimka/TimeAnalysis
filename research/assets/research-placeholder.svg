@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">Time series research placeholder</title>
+  <desc id="desc">A line chart on a dark blue background.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#12263f"/>
+      <stop offset="100%" stop-color="#1b4965"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" x2="1">
+      <stop offset="0%" stop-color="#bee9e8"/>
+      <stop offset="100%" stop-color="#62b6cb"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="400" fill="url(#background)"/>
+  <g stroke="#cae9ff" stroke-opacity="0.18" stroke-width="1">
+    <path d="M72 80H660M72 150H660M72 220H660M72 290H660"/>
+    <path d="M160 48V330M270 48V330M380 48V330M490 48V330M600 48V330"/>
+  </g>
+  <path d="M72 274L140 248L205 262L270 188L335 210L400 132L465 166L530 114L595 138L660 76"
+        fill="none" stroke="url(#line)" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+  <g fill="#bee9e8">
+    <circle cx="72" cy="274" r="7"/>
+    <circle cx="270" cy="188" r="7"/>
+    <circle cx="400" cy="132" r="7"/>
+    <circle cx="530" cy="114" r="7"/>
+    <circle cx="660" cy="76" r="7"/>
+  </g>
+</svg>

@@ -1,0 +1,37 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - about.qmd
+    - "posts/*.ipynb"
+  resources:
+    - "assets/**"
+
+website:
+  title: "TimeAnalysis Research"
+  site-url: "https://04Maksimka.github.io/TimeAnalysis/"
+  description: "Public research notebooks for the TimeAnalysis project."
+  repo-url: "https://github.com/04Maksimka/TimeAnalysis"
+  repo-actions: [source, issue]
+  navbar:
+    left:
+      - href: index.qmd
+        text: Research
+      - href: about.qmd
+        text: About
+    right:
+      - icon: github
+        href: "https://github.com/04Maksimka/TimeAnalysis"
+        aria-label: GitHub
+
+execute:
+  enabled: false
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    code-fold: true
+    code-tools: true

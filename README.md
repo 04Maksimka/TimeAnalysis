@@ -117,3 +117,13 @@ format check fails — fix issues locally with the commands above and push again
 - **Product mindset** — We are building a real, commercial product — not an educational exercise.
 - **AI usage** — We use AI tools only for visualization and as a reference, not for core development.
 - **Documentation** — We write clear, beautiful documentation that can be understood by non-professionals.
+
+## Research blog
+
+Public research notebooks are published as a card-based Quarto blog at
+<https://04Maksimka.github.io/TimeAnalysis/>.
+
+To publish a new exploration, add an executed Jupyter notebook to
+`research/posts/` and push it to `main`. See
+[`research/README.md`](research/README.md) for the notebook template, local
+preview command, and the one-time GitHub Pages setting.

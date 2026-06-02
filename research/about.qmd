@@ -1,0 +1,12 @@
+---
+title: "About"
+---
+
+## TimeAnalysis Research
+
+This site is the public research log for the TimeAnalysis project. It contains
+Jupyter notebooks with saved outputs so that charts, tables, and conclusions
+remain visible without re-running computations during deployment.
+
+New research appears here automatically after a notebook is added to
+`research/posts/` and pushed to the `main` branch.
