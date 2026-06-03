@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="title desc">
+  <title id="title">MNIST component analysis cover</title>
+  <desc id="desc">A stylized three-dimensional scatter plot for SVD component analysis.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="720" height="400" fill="url(#background)"/>
+  <g stroke="#c7d2fe" stroke-opacity="0.18" stroke-width="1.4" fill="none">
+    <path d="M150 285L360 335L585 245"/>
+    <path d="M150 285L150 95"/>
+    <path d="M150 285L265 178L585 245"/>
+    <path d="M215 300L330 192L650 260"/>
+    <path d="M280 316L395 208L715 276"/>
+    <path d="M265 178L265 70"/>
+    <path d="M365 200L365 92"/>
+    <path d="M465 223L465 115"/>
+    <path d="M565 245L565 137"/>
+  </g>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif" fill="#eef2ff">
+    <text x="52" y="68" font-size="34" font-weight="700">Component Analysis</text>
+    <text x="52" y="105" font-size="18" fill="#c7d2fe">MNIST projected to the first 3 SVD components</text>
+  </g>
+
+  <g filter="url(#glow)">
+    <g fill="#22d3ee">
+      <circle cx="300" cy="210" r="7"/>
+      <circle cx="332" cy="182" r="6"/>
+      <circle cx="354" cy="224" r="7"/>
+      <circle cx="390" cy="196" r="5"/>
+      <circle cx="415" cy="235" r="6"/>
+      <circle cx="458" cy="210" r="7"/>
+    </g>
+    <g fill="#f97316">
+      <circle cx="460" cy="150" r="7"/>
+      <circle cx="492" cy="128" r="6"/>
+      <circle cx="520" cy="170" r="7"/>
+      <circle cx="548" cy="142" r="5"/>
+      <circle cx="575" cy="182" r="6"/>
+    </g>
+    <g fill="#a78bfa">
+      <circle cx="210" cy="245" r="7"/>
+      <circle cx="235" cy="220" r="6"/>
+      <circle cx="260" cy="266" r="7"/>
+      <circle cx="285" cy="235" r="5"/>
+      <circle cx="315" cy="275" r="6"/>
+    </g>
+    <g fill="#34d399">
+      <circle cx="395" cy="285" r="7"/>
+      <circle cx="430" cy="260" r="6"/>
+      <circle cx="465" cy="303" r="7"/>
+      <circle cx="505" cy="278" r="5"/>
+      <circle cx="535" cy="315" r="6"/>
+    </g>
+  </g>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" fill="#c7d2fe">
+    <text x="590" y="252">component 1</text>
+    <text x="118" y="88">component 2</text>
+    <text x="340" y="354">component 3</text>
+  </g>
+</svg>
