@@ -20,6 +20,7 @@ dependencies = [
     "jupyter>=1.0",
     "ipykernel>=6.29",
     "requests>=2.33.1",
+    "jupyterlab",
 ]
 
 [project.optional-dependencies]

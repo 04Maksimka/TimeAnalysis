@@ -1936,6 +1936,7 @@ source = { editable = "." }
 dependencies = [
     { name = "ipykernel" },
     { name = "jupyter" },
+    { name = "jupyterlab" },
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "pandas" },
@@ -1961,6 +1962,7 @@ dev = [
 requires-dist = [
     { name = "ipykernel", specifier = ">=6.29" },
     { name = "jupyter", specifier = ">=1.0" },
+    { name = "jupyterlab" },
     { name = "matplotlib", specifier = ">=3.9" },
     { name = "numpy", specifier = ">=2.0" },
     { name = "pandas", specifier = ">=2.0" },
