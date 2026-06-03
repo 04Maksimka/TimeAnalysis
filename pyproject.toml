@@ -19,6 +19,7 @@ dependencies = [
     "plotly>=5.22",
     "jupyter>=1.0",
     "ipykernel>=6.29",
+    "requests>=2.33.1",
 ]
 
 [project.optional-dependencies]
