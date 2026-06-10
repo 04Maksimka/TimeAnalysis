@@ -1,7 +1,9 @@
 ---
 title: "Research"
 listing:
-  contents: "posts/*.ipynb"
+  contents:
+    - "posts/*.ipynb"
+    - "posts/*.qmd"
   type: grid
   grid-columns: 3
   sort: "date desc"
@@ -14,5 +16,5 @@ page-layout: full
 ---
 
 This page collects reproducible explorations for the TimeAnalysis project.
-Each card is generated automatically from a Jupyter notebook committed to
-`research/posts/`.
+Each card is generated automatically from a Jupyter notebook or Quarto post
+committed to `research/posts/`.

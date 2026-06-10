@@ -46,6 +46,70 @@ uv sync --dev
 
 This creates a `.venv` and installs all dependencies. Run once after cloning.
 
+## Freqtrade backtesting runtime
+
+Freqtrade is integrated as a separate Docker-based runtime under
+`trading/freqtrade/`. The main Python package stays focused on reusable models
+and research code, while Freqtrade acts as an execution adapter for backtests,
+dry runs, and future live trading.
+
+### Prerequisites
+
+- Docker Desktop with Docker Compose enabled.
+- A completed local Python setup via `uv sync --dev`.
+- No exchange API keys are needed for the default backtesting flow.
+
+### First-time setup
+
+Copy the example config to a local config file. The local file is ignored by git
+because it can later contain exchange keys and private runtime settings.
+
+```powershell
+cd trading/freqtrade
+Copy-Item user_data\config.example.json user_data\config.json
+```
+
+```bash
+cd trading/freqtrade
+cp user_data/config.example.json user_data/config.json
+```
+
+Pull the Freqtrade Docker image:
+
+```bash
+docker compose pull
+```
+
+Download historical candles for the pairs configured in
+`user_data/config.json`:
+
+```bash
+docker compose run --rm freqtrade download-data --config /freqtrade/user_data/config.json --timeframes 5m --timerange 20250101-20250201
+```
+
+Run a baseline backtest:
+
+```bash
+docker compose run --rm freqtrade backtesting --config /freqtrade/user_data/config.json --strategy TimeAnalysisSmaStrategy --strategy-path /freqtrade/user_data/strategies --timeframe 5m --timerange 20250101-20250201 --export trades
+```
+
+Backtest artifacts are written to
+`trading/freqtrade/user_data/backtest_results/` and are intentionally ignored by
+git.
+
+### Project trading structure
+
+- `src/time_analysis/models/` contains exchange-independent signal models.
+- `trading/freqtrade/user_data/strategies/` contains thin Freqtrade adapters.
+- `trading/freqtrade/user_data/config.example.json` is the safe template for
+  new contributors.
+- `trading/freqtrade/user_data/config.json` is local-only and should never be
+  committed.
+
+The current example uses `SmaMomentumModel`, a simple long-only moving-average
+crossover model. It is intentionally simple so the full pipeline is easy to
+test and inspect before adding ML or exchange-specific behavior.
+
 ### Run files
 
 ```bash
