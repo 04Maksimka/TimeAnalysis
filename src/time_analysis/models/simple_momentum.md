@@ -107,6 +107,12 @@ The returned dataframe is a copy of the input with these additional columns:
 
 The input dataframe is not mutated.
 
+## Shared Interface
+
+`SmaMomentumModel` implements the shared `SignalModel` interface. It can be
+used in the same vectorized comparison pipeline as the other models in this
+folder.
+
 ## Trading Meaning
 
 The model assumes that a fast average crossing above a slow average can indicate

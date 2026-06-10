@@ -11,7 +11,15 @@ from time_analysis.models.simple_momentum import (
 
 
 class TimeAnalysisSmaStrategy(IStrategy):
-    """Freqtrade adapter for the baseline TimeAnalysis SMA model."""
+    """Freqtrade adapter for the baseline TimeAnalysis SMA model.
+
+    Attributes:
+        timeframe: Freqtrade candle timeframe used by the strategy
+        can_short: whether the strategy can open short positions
+        process_only_new_candles: process only completed new candles
+        model: exchange-independent pandas signal model
+        startup_candle_count: candles required before stable signals are emitted
+    """
 
     timeframe = "5m"
     can_short = False
@@ -43,14 +51,35 @@ class TimeAnalysisSmaStrategy(IStrategy):
     }
 
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """Populate model indicators and raw signal columns.
+
+        :param dataframe: Freqtrade OHLCV dataframe for the current pair
+        :param metadata: Freqtrade metadata with pair and runtime context
+        :return: dataframe with model indicator and signal columns
+        """
+
         return self.model.predict(dataframe)
 
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """Map the model entry signal to Freqtrade's entry column.
+
+        :param dataframe: dataframe returned by ``populate_indicators``
+        :param metadata: Freqtrade metadata with pair and runtime context
+        :return: dataframe with ``enter_long`` values populated
+        """
+
         dataframe["enter_long"] = 0
         dataframe.loc[dataframe[ENTRY_SIGNAL_COLUMN], "enter_long"] = 1
         return dataframe
 
     def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """Map the model exit signal to Freqtrade's exit column.
+
+        :param dataframe: dataframe returned by ``populate_indicators``
+        :param metadata: Freqtrade metadata with pair and runtime context
+        :return: dataframe with ``exit_long`` values populated
+        """
+
         dataframe["exit_long"] = 0
         dataframe.loc[dataframe[EXIT_SIGNAL_COLUMN], "exit_long"] = 1
         return dataframe

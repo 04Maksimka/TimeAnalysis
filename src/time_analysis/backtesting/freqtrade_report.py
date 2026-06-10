@@ -13,7 +13,14 @@ import pandas as pd
 
 
 def find_latest_backtest_result(results_dir: Path | str) -> Path:
-    """Return the latest Freqtrade backtest result file from a results directory."""
+    """Find the latest Freqtrade backtest result file.
+
+    Uses Freqtrade's ``.last_result.json`` pointer when it is present, then
+    falls back to the newest JSON or ZIP result file in the directory.
+
+    :param results_dir: directory containing Freqtrade backtest artifacts
+    :return: path to the newest main backtest result file
+    """
 
     directory = Path(results_dir)
     last_result = directory / ".last_result.json"
@@ -42,7 +49,11 @@ def find_latest_backtest_result(results_dir: Path | str) -> Path:
 
 
 def load_backtest_payload(result_path: Path | str) -> dict[str, Any]:
-    """Load the main JSON payload from a Freqtrade result JSON or ZIP file."""
+    """Load the main JSON payload from a Freqtrade result file.
+
+    :param result_path: path to a Freqtrade JSON or ZIP result artifact
+    :return: decoded Freqtrade result payload
+    """
 
     path = Path(result_path)
     if path.suffix == ".zip":
@@ -55,7 +66,12 @@ def load_latest_backtest_report(
     results_dir: Path | str,
     strategy_name: str | None = None,
 ) -> FreqtradeBacktestReport:
-    """Load the newest backtest result and wrap it as report-ready tables."""
+    """Load the newest backtest result as a report object.
+
+    :param results_dir: directory containing Freqtrade backtest artifacts
+    :param strategy_name: optional strategy name to select from the payload
+    :return: report object with normalized metric and table helpers
+    """
 
     source_path = find_latest_backtest_result(results_dir)
     payload = load_backtest_payload(source_path)
@@ -72,14 +88,23 @@ def load_latest_backtest_report(
 
 @dataclass(frozen=True, slots=True)
 class FreqtradeBacktestReport:
-    """Report-friendly view of one Freqtrade strategy backtest result."""
+    """Report-friendly view of one Freqtrade strategy backtest result.
+
+    Attributes:
+        source_path: path to the source Freqtrade result artifact
+        strategy_name: selected strategy name from the Freqtrade payload
+        payload: strategy-specific Freqtrade result payload
+    """
 
     source_path: Path
     strategy_name: str
     payload: dict[str, Any]
 
     def metrics(self) -> dict[str, Any]:
-        """Return headline metrics in raw numeric form."""
+        """Return headline metrics in raw numeric form.
+
+        :return: dictionary of strategy, period, trade, profit, and drawdown metrics
+        """
 
         return {
             "strategy": self.strategy_name,
@@ -103,7 +128,10 @@ class FreqtradeBacktestReport:
         }
 
     def trades_frame(self) -> pd.DataFrame:
-        """Return normalized trade rows sorted by close time."""
+        """Return normalized trade rows sorted by close time.
+
+        :return: dataframe of trades with parsed dates and numeric columns
+        """
 
         trades = pd.DataFrame(self.payload.get("trades", []))
         if trades.empty:
@@ -141,7 +169,10 @@ class FreqtradeBacktestReport:
         return trades
 
     def pair_summary_frame(self) -> pd.DataFrame:
-        """Return Freqtrade's per-pair summary as a dataframe."""
+        """Return Freqtrade's per-pair summary as a dataframe.
+
+        :return: dataframe with one row per traded pair
+        """
 
         frame = pd.DataFrame(self.payload.get("results_per_pair", []))
         if frame.empty:
@@ -151,7 +182,10 @@ class FreqtradeBacktestReport:
         return _coerce_numeric_columns(frame)
 
     def exit_reason_summary_frame(self) -> pd.DataFrame:
-        """Return Freqtrade's exit reason summary as a dataframe."""
+        """Return Freqtrade's exit reason summary as a dataframe.
+
+        :return: dataframe with one row per Freqtrade exit reason
+        """
 
         frame = pd.DataFrame(self.payload.get("exit_reason_summary", []))
         if frame.empty:
@@ -161,7 +195,10 @@ class FreqtradeBacktestReport:
         return _coerce_numeric_columns(frame)
 
     def daily_profit_frame(self) -> pd.DataFrame:
-        """Return daily absolute profit with cumulative profit."""
+        """Return daily absolute profit with cumulative profit.
+
+        :return: dataframe with daily and cumulative absolute profit
+        """
 
         periodic = self.payload.get("periodic_breakdown", {})
         if isinstance(periodic, dict) and periodic.get("day"):
@@ -185,7 +222,10 @@ class FreqtradeBacktestReport:
         return frame.sort_values("date").reset_index(drop=True)
 
     def equity_curve_frame(self) -> pd.DataFrame:
-        """Return a trade-by-trade equity and drawdown curve."""
+        """Return a trade-by-trade equity and drawdown curve.
+
+        :return: dataframe with equity, peak equity, and drawdown after each trade
+        """
 
         trades = self.trades_frame()
         if trades.empty or "profit_abs" not in trades:
@@ -206,6 +246,12 @@ class FreqtradeBacktestReport:
 
 
 def _load_backtest_payload_from_zip(path: Path) -> dict[str, Any]:
+    """Load the main JSON payload from a zipped Freqtrade artifact.
+
+    :param path: path to a Freqtrade ZIP result artifact
+    :return: decoded main JSON payload from the archive
+    """
+
     with zipfile.ZipFile(path) as archive:
         json_names = [
             name
@@ -225,6 +271,13 @@ def _select_strategy_payload(
     payload: dict[str, Any],
     strategy_name: str | None,
 ) -> tuple[str, dict[str, Any]]:
+    """Select one strategy payload from a Freqtrade result payload.
+
+    :param payload: decoded top-level Freqtrade result payload
+    :param strategy_name: optional strategy name to select
+    :return: selected strategy name and strategy-specific payload
+    """
+
     strategies = payload.get("strategy")
     if not isinstance(strategies, dict) or not strategies:
         msg = "Freqtrade payload does not contain a non-empty 'strategy' object"
@@ -243,6 +296,12 @@ def _select_strategy_payload(
 
 
 def _coerce_numeric_columns(frame: pd.DataFrame) -> pd.DataFrame:
+    """Coerce report table columns to numeric types where possible.
+
+    :param frame: dataframe returned from a Freqtrade summary section
+    :return: dataframe copy with numeric columns converted
+    """
+
     result = frame.copy()
     for column in result.columns:
         if column not in {"pair", "exit_reason", "duration_avg", "key", "date"}:
