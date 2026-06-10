@@ -8,15 +8,20 @@ version = "0.1.0"
 description = "Data analysis of time sequences"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.13"
+requires-python = ">=3.11,<3.14"
 
 dependencies = [
     "numpy>=2.0",
     "pandas>=2.0",
     "scipy>=1.13",
     "scikit-learn>=1.5",
+    "catboost>=1.2.7",
+    "torch>=2.7",
     "matplotlib>=3.9",
     "plotly>=5.22",
+    "pyarrow>=16.0",
+    "seaborn>=0.13",
+    "tqdm>=4.66",
     "jupyter>=1.0",
     "ipykernel>=6.29",
     "requests>=2.33.1",
@@ -29,24 +34,32 @@ dev = [
     "ruff>=0.4",
 ]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["algorithms*", "research*", "examples*"]
-
 [dependency-groups]
 dev = [
     "pytest>=8.0",
     "ruff>=0.4",
 ]
 
+[tool.uv]
+cache-dir = ".uv/cache"
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
 [tool.ruff]
 line-length = 88
-target-version = "py313"
+target-version = "py311"
 extend-exclude = [
     ".venv",
     "literature",
     "time_analysis.egg-info",
     "docs",
+    "research/posts/*.ipynb",
 ]
 
 [tool.ruff.lint]
@@ -66,7 +79,6 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["N802", "N803"]
 "**/*.ipynb" = ["E402", "F401"]
 
 [tool.ruff.format]
