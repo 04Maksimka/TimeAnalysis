@@ -1,0 +1,12 @@
+[submodule "trading/freqtrade"]
+	path = trading/freqtrade
+	url = https://github.com/freqtrade/freqtrade.git
+	branch = stable
+[submodule "trading/frequi"]
+	path = trading/frequi
+	url = https://github.com/freqtrade/frequi.git
+	branch = main
+[submodule "trading/freqtrade-strategies"]
+	path = trading/freqtrade-strategies
+	url = https://github.com/freqtrade/freqtrade-strategies.git
+	branch = main

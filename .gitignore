@@ -25,13 +25,17 @@ __pycache__/
 
 time_analysis.egg-info
 
-# Freqtrade local runtime artifacts
-trading/freqtrade/user_data/config.json
-trading/freqtrade/user_data/data/*
-!trading/freqtrade/user_data/data/.gitkeep
-trading/freqtrade/user_data/backtest_results/*
-!trading/freqtrade/user_data/backtest_results/.gitkeep
-trading/freqtrade/user_data/logs/*
-!trading/freqtrade/user_data/logs/.gitkeep
-trading/freqtrade/user_data/hyperopt_results/*
-!trading/freqtrade/user_data/hyperopt_results/.gitkeep
+# Freqtrade source/runtime artifacts
+trading/freqtrade/.venv/
+trading/frequi/node_modules/
+trading/frequi/dist/
+
+trading/user_data/config.json
+trading/user_data/data/*
+!trading/user_data/data/.gitkeep
+trading/user_data/backtest_results/*
+!trading/user_data/backtest_results/.gitkeep
+trading/user_data/logs/*
+!trading/user_data/logs/.gitkeep
+trading/user_data/hyperopt_results/*
+!trading/user_data/hyperopt_results/.gitkeep

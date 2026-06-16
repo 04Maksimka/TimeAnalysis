@@ -46,69 +46,95 @@ uv sync --dev
 
 This creates a `.venv` and installs all dependencies. Run once after cloning.
 
-## Freqtrade backtesting runtime
+## Freqtrade native runtime
 
-Freqtrade is integrated as a separate Docker-based runtime under
-`trading/freqtrade/`. The main Python package stays focused on reusable models
-and research code, while Freqtrade acts as an execution adapter for backtests,
-dry runs, and future live trading.
+Freqtrade is integrated directly from source under `trading/` without Docker.
+Upstream projects are stored as Git submodules, while local runtime files live
+in `trading/user_data/`.
 
-### Prerequisites
+### Trading structure
 
-- Docker Desktop with Docker Compose enabled.
-- A completed local Python setup via `uv sync --dev`.
-- No exchange API keys are needed for the default backtesting flow.
+- `trading/freqtrade/` contains the Freqtrade source submodule on `stable`.
+- `trading/frequi/` contains the FreqUI source submodule on `main`.
+- `trading/freqtrade-strategies/` contains upstream example strategies.
+- `trading/user_data/` contains local configs, strategies, data, logs, and
+  backtest results.
 
-### First-time setup
+The upstream submodules keep their own GPL-3.0 licenses. The project-level MIT
+license does not relicense code inside these submodule directories.
 
-Copy the example config to a local config file. The local file is ignored by git
-because it can later contain exchange keys and private runtime settings.
+### Clone with submodules
+
+After cloning this repository, initialize the upstream trading sources:
+
+```powershell
+git submodule update --init --recursive
+```
+
+### Install Freqtrade
+
+Create a dedicated Python environment inside the Freqtrade source checkout:
 
 ```powershell
 cd trading/freqtrade
-Copy-Item user_data\config.example.json user_data\config.json
+py -3.13 -m venv .venv
+. .\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -e .
 ```
 
-```bash
-cd trading/freqtrade
-cp user_data/config.example.json user_data/config.json
+Copy the safe config template to a local config file. The local file is ignored
+by git because it can contain API keys, passwords, and private runtime settings.
+
+```powershell
+Copy-Item ..\user_data\config.example.json ..\user_data\config.json
 ```
 
-Pull the Freqtrade Docker image:
-
-```bash
-docker compose pull
-```
+### Run Freqtrade
 
 Download historical candles for the pairs configured in
-`user_data/config.json`:
+`trading/user_data/config.json`:
 
-```bash
-docker compose run --rm freqtrade download-data --config /freqtrade/user_data/config.json --timeframes 5m --timerange 20250101-20250201
+```powershell
+freqtrade download-data --userdir ..\user_data --config ..\user_data\config.json --timeframes 5m --timerange 20250101-20250201
 ```
 
-Run a baseline backtest:
+Run a backtest with a local strategy:
 
-```bash
-docker compose run --rm freqtrade backtesting --config /freqtrade/user_data/config.json --strategy TimeAnalysisSmaStrategy --strategy-path /freqtrade/user_data/strategies --timeframe 5m --timerange 20250101-20250201 --export trades
+```powershell
+freqtrade backtesting --userdir ..\user_data --config ..\user_data\config.json --strategy <StrategyClass> --strategy-path ..\user_data\strategies --timeframe 5m --timerange 20250101-20250201 --export trades
 ```
 
-Backtest artifacts are written to
-`trading/freqtrade/user_data/backtest_results/` and are intentionally ignored by
-git.
+Backtest artifacts are written to `trading/user_data/backtest_results/` and are
+intentionally ignored by git.
 
-### Project trading structure
+To test an upstream example strategy without copying it into local user data:
 
-- `src/time_analysis/models/` contains exchange-independent signal models.
-- `trading/freqtrade/user_data/strategies/` contains thin Freqtrade adapters.
-- `trading/freqtrade/user_data/config.example.json` is the safe template for
-  new contributors.
-- `trading/freqtrade/user_data/config.json` is local-only and should never be
-  committed.
+```powershell
+freqtrade backtesting --userdir ..\user_data --config ..\user_data\config.json --strategy Strategy001 --strategy-path ..\freqtrade-strategies\user_data\strategies
+```
 
-The current example uses `SmaMomentumModel`, a simple long-only moving-average
-crossover model. It is intentionally simple so the full pipeline is easy to
-test and inspect before adding ML or exchange-specific behavior.
+### Run FreqUI from source
+
+`trading/user_data/config.example.json` enables the local Freqtrade API server
+on `http://127.0.0.1:8080` and allows the default Vite development origins.
+
+Start the Freqtrade API:
+
+```powershell
+cd trading/freqtrade
+. .\.venv\Scripts\Activate.ps1
+freqtrade webserver --userdir ..\user_data --config ..\user_data\config.json
+```
+
+Start the FreqUI development server in another terminal:
+
+```powershell
+cd trading/frequi
+corepack enable
+pnpm install
+pnpm run dev
+```
 
 ### Run files
 
