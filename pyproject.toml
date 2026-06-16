@@ -65,7 +65,7 @@ extend-exclude = [
     "literature",
     "time_analysis.egg-info",
     "docs",
-    "research/posts/*.ipynb",
+    "research/posts/**/*.ipynb",
 ]
 
 [tool.ruff.lint]

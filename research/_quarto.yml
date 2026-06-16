@@ -4,8 +4,20 @@ project:
   render:
     - index.qmd
     - about.qmd
-    - "posts/*.ipynb"
-    - "posts/*.qmd"
+    - model-strategies.qmd
+    - educational.qmd
+    - project-infrastructure.qmd
+    - exploratory-data-analysis.qmd
+    - "posts/model-strategies/*.ipynb"
+    - "posts/educational/tutorials/*.ipynb"
+    - "posts/educational/related-topics/*.ipynb"
+    - "posts/project-infrastructure/*.ipynb"
+    - "posts/exploratory-data-analysis/*.ipynb"
+    - "posts/model-strategies/*.qmd"
+    - "posts/educational/tutorials/*.qmd"
+    - "posts/educational/related-topics/*.qmd"
+    - "posts/project-infrastructure/*.qmd"
+    - "posts/exploratory-data-analysis/*.qmd"
   resources:
     - "assets/**"
 
@@ -19,6 +31,16 @@ website:
     left:
       - href: index.qmd
         text: Research
+      - text: Sections
+        menu:
+          - href: model-strategies.qmd
+            text: "Models & Strategies"
+          - href: educational.qmd
+            text: "Educational"
+          - href: project-infrastructure.qmd
+            text: "Project Infrastructure"
+          - href: exploratory-data-analysis.qmd
+            text: "Exploratory Data Analysis"
       - href: about.qmd
         text: About
     right:

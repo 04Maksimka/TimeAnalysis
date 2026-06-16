@@ -1,12 +1,21 @@
 # Research blog
 
 The `research/` directory is an independent Quarto website. Its articles are
-Jupyter notebooks and Quarto posts stored in `research/posts/`.
+Jupyter notebooks and Quarto posts stored in section folders under
+`research/posts/`.
+
+## Sections
+
+- `posts/model-strategies/` - trading strategy and model research.
+- `posts/educational/tutorials/` - tutorials.
+- `posts/educational/related-topics/` - adjacent educational topics.
+- `posts/project-infrastructure/` - UML, UI, runtime checks, and service docs.
+- `posts/exploratory-data-analysis/` - data properties and feature generation.
 
 ## Publish a new research post
 
-1. Copy `posts/example-research.ipynb` to `posts/<short-name>.ipynb`, or create
-   a plain Quarto post as `posts/<short-name>.qmd`.
+1. Copy `posts/example-research.ipynb` into the matching section folder as
+   `<short-name>.ipynb`, or create a plain Quarto post as `<short-name>.qmd`.
 2. Update the YAML metadata in the first Raw cell:
 
    ```yaml
@@ -21,7 +30,8 @@ Jupyter notebooks and Quarto posts stored in `research/posts/`.
 
 3. Write the research and run notebook cells locally when the post is a
    notebook.
-4. Commit the post with saved outputs when applicable and push it to `main`.
+4. Add a pencil-style cover image under `assets/` and point `image:` at it.
+5. Commit the post with saved outputs when applicable and push it to `main`.
 
 The `Publish research blog` GitHub Actions workflow renders the saved outputs
 without executing notebook code and deploys the site to:

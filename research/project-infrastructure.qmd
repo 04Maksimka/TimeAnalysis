@@ -1,0 +1,17 @@
+---
+title: "Project Infrastructure"
+listing:
+  contents:
+    - "posts/project-infrastructure/*.ipynb"
+    - "posts/project-infrastructure/*.qmd"
+  type: grid
+  grid-columns: 3
+  sort: "date desc"
+  categories: true
+  filter-ui: true
+  sort-ui: [date, title]
+  image-placeholder: "assets/research-placeholder-pencil.png"
+page-layout: full
+---
+
+Documentation and checks for the TimeAnalysis service, runtime, UI, and project architecture.

@@ -1,0 +1,17 @@
+---
+title: "Exploratory Data Analysis"
+listing:
+  contents:
+    - "posts/exploratory-data-analysis/*.ipynb"
+    - "posts/exploratory-data-analysis/*.qmd"
+  type: grid
+  grid-columns: 3
+  sort: "date desc"
+  categories: true
+  filter-ui: true
+  sort-ui: [date, title]
+  image-placeholder: "assets/research-placeholder-pencil.png"
+page-layout: full
+---
+
+Research on raw data properties, statistical structure, and informative feature generation.

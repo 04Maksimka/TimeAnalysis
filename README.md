@@ -187,7 +187,7 @@ format check fails — fix issues locally with the commands above and push again
 Public research notebooks are published as a card-based Quarto blog at
 <https://04Maksimka.github.io/TimeAnalysis/>.
 
-To publish a new exploration, add an executed Jupyter notebook to
-`research/posts/` and push it to `main`. See
+To publish a new exploration, add an executed Jupyter notebook to the matching
+section folder under `research/posts/` and push it to `main`. See
 [`research/README.md`](research/README.md) for the notebook template, local
 preview command, and the one-time GitHub Pages setting.

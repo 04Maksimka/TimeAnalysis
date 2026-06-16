@@ -2,8 +2,16 @@
 title: "Research"
 listing:
   contents:
-    - "posts/*.ipynb"
-    - "posts/*.qmd"
+    - "posts/model-strategies/*.ipynb"
+    - "posts/educational/tutorials/*.ipynb"
+    - "posts/educational/related-topics/*.ipynb"
+    - "posts/project-infrastructure/*.ipynb"
+    - "posts/exploratory-data-analysis/*.ipynb"
+    - "posts/model-strategies/*.qmd"
+    - "posts/educational/tutorials/*.qmd"
+    - "posts/educational/related-topics/*.qmd"
+    - "posts/project-infrastructure/*.qmd"
+    - "posts/exploratory-data-analysis/*.qmd"
   type: grid
   grid-columns: 3
   sort: "date desc"
@@ -11,10 +19,17 @@ listing:
   filter-ui: true
   sort-ui: [date, title]
   feed: true
-  image-placeholder: "assets/research-placeholder.svg"
+  image-placeholder: "assets/research-placeholder-pencil.png"
 page-layout: full
 ---
 
 This page collects reproducible explorations for the TimeAnalysis project.
 Each card is generated automatically from a Jupyter notebook or Quarto post
-committed to `research/posts/`.
+committed to one of the research section folders.
+
+## Sections
+
+- [Models & Strategies](model-strategies.qmd) - trading strategy and model research.
+- [Educational](educational.qmd) - tutorials and adjacent learning topics.
+- [Project Infrastructure](project-infrastructure.qmd) - runtime checks, UML, UI, and service documentation.
+- [Exploratory Data Analysis](exploratory-data-analysis.qmd) - data properties and feature exploration.
