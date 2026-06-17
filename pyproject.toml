@@ -34,6 +34,7 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["trading"]
+exclude = ["freqtrade*"]
 
 [project.optional-dependencies]
 dev = [
@@ -60,7 +61,7 @@ url = "https://download.pytorch.org/whl/cu128"
 explicit = true
 
 [tool.ruff]
-line-length = 88
+line-length = 88exclude = ["freqtrade*"]
 target-version = "py311"
 extend-exclude = [
     ".venv",
