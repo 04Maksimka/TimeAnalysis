@@ -29,10 +29,10 @@ dependencies = [
 ]
 
 [tool.setuptools.package-dir]
-"" = "src"
+"" = "trading"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["trading"]
 
 [project.optional-dependencies]
 dev = [
@@ -94,4 +94,4 @@ line-ending = "lf"
 docstring-code-format = true
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["trading"]
