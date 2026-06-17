@@ -6,10 +6,6 @@
 	path = trading/frequi
 	url = https://github.com/freqtrade/frequi.git
 	branch = main
-[submodule "trading/freqtrade-strategies"]
-	path = trading/freqtrade-strategies
-	url = https://github.com/freqtrade/freqtrade-strategies.git
-	branch = main
 [submodule "trading/user_data/strategies/freqtrade-strategies"]
 	path = trading/user_data/strategies/freqtrade-strategies
 	url = https://github.com/freqtrade/freqtrade-strategies.git
