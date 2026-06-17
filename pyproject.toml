@@ -26,6 +26,7 @@ dependencies = [
     "ipykernel>=6.29",
     "requests>=2.33.1",
     "jupyterlab",
+    "freqtrade",
 ]
 
 [tool.setuptools.package-dir]
@@ -51,6 +52,7 @@ cache-dir = ".uv/cache"
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }
+freqtrade = { path = "trading/freqtrade", editable = true }
 
 [[tool.uv.index]]
 name = "pytorch-cu128"
