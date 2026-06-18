@@ -26,13 +26,14 @@ dependencies = [
     "ipykernel>=6.29",
     "requests>=2.33.1",
     "jupyterlab",
+    "freqtrade",
 ]
 
 [tool.setuptools.package-dir]
-"" = "src"
+"" = "trading"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["trading"]
 
 [project.optional-dependencies]
 dev = [
@@ -51,6 +52,7 @@ cache-dir = ".uv/cache"
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }
+freqtrade = { path = "trading/freqtrade", editable = true }
 
 [[tool.uv.index]]
 name = "pytorch-cu128"
@@ -94,4 +96,4 @@ line-ending = "lf"
 docstring-code-format = true
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["trading"]
