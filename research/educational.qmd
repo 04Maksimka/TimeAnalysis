@@ -6,6 +6,8 @@ listing:
     - "posts/educational/tutorials/*.qmd"
     - "posts/educational/related-topics/*.ipynb"
     - "posts/educational/related-topics/*.qmd"
+    - "posts/educational/related-topics/*/*.ipynb"
+    - "posts/educational/related-topics/*/*.qmd"
   type: grid
   grid-columns: 3
   sort: "date desc"
