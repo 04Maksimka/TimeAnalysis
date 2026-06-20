@@ -11,11 +11,13 @@ project:
     - "posts/model-strategies/*.ipynb"
     - "posts/educational/tutorials/*.ipynb"
     - "posts/educational/related-topics/*.ipynb"
+    - "posts/educational/related-topics/*/*.ipynb"
     - "posts/project-infrastructure/*.ipynb"
     - "posts/exploratory-data-analysis/*.ipynb"
     - "posts/model-strategies/*.qmd"
     - "posts/educational/tutorials/*.qmd"
     - "posts/educational/related-topics/*.qmd"
+    - "posts/educational/related-topics/*/*.qmd"
     - "posts/project-infrastructure/*.qmd"
     - "posts/exploratory-data-analysis/*.qmd"
   resources:
@@ -30,17 +32,15 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Research
-      - text: Sections
-        menu:
-          - href: model-strategies.qmd
-            text: "Models & Strategies"
-          - href: educational.qmd
-            text: "Educational"
-          - href: project-infrastructure.qmd
-            text: "Project Infrastructure"
-          - href: exploratory-data-analysis.qmd
-            text: "Exploratory Data Analysis"
+        text: Categories
+      - href: model-strategies.qmd
+        text: "Models & Strategies"
+      - href: educational.qmd
+        text: "Educational"
+      - href: project-infrastructure.qmd
+        text: "Infrastructure"
+      - href: exploratory-data-analysis.qmd
+        text: "EDA"
       - href: about.qmd
         text: About
     right:

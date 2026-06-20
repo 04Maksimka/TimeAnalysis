@@ -2,8 +2,9 @@
 title: "Models & Strategies"
 listing:
   contents:
-    - "posts/model-strategies/*.ipynb"
-    - "posts/model-strategies/*.qmd"
+    - "posts/educational/related-topics/patchtst-cuda-forecasting.ipynb"
+    - "posts/educational/related-topics/model-backtesting-pipeline.ipynb"
+    - "posts/educational/related-topics/model-zoo-backtest-comparison.ipynb"
   type: grid
   grid-columns: 3
   sort: "date desc"
@@ -14,4 +15,4 @@ listing:
 page-layout: full
 ---
 
-Research notes about trading models, forecasting approaches, and strategy backtests.
+Trading models, forecasting approaches, and strategy backtests.

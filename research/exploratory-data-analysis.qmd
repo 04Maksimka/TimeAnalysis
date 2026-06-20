@@ -2,8 +2,7 @@
 title: "Exploratory Data Analysis"
 listing:
   contents:
-    - "posts/exploratory-data-analysis/*.ipynb"
-    - "posts/exploratory-data-analysis/*.qmd"
+    - "posts/educational/related-topics/component-analysis.ipynb"
   type: grid
   grid-columns: 3
   sort: "date desc"
@@ -14,4 +13,4 @@ listing:
 page-layout: full
 ---
 
-Research on raw data properties, statistical structure, and informative feature generation.
+Research on data structure, dimensionality reduction, and informative visualization.
