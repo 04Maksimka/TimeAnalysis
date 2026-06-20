@@ -2,8 +2,7 @@
 title: "Project Infrastructure"
 listing:
   contents:
-    - "posts/project-infrastructure/*.ipynb"
-    - "posts/project-infrastructure/*.qmd"
+    - "posts/educational/related-topics/freqtrade-backtester-smoke-test.ipynb"
   type: grid
   grid-columns: 3
   sort: "date desc"

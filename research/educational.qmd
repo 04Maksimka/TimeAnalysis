@@ -2,12 +2,10 @@
 title: "Educational"
 listing:
   contents:
-    - "posts/educational/tutorials/*.ipynb"
-    - "posts/educational/tutorials/*.qmd"
-    - "posts/educational/related-topics/*.ipynb"
-    - "posts/educational/related-topics/*.qmd"
-    - "posts/educational/related-topics/*/*.ipynb"
-    - "posts/educational/related-topics/*/*.qmd"
+    - "posts/educational/related-topics/neural_ntworks/math_bihind_nn.ipynb"
+    - "posts/educational/related-topics/parametric-estimates.ipynb"
+    - "posts/educational/related-topics/sklearn-bybit-tutorial.ipynb"
+    - "posts/educational/related-topics/lagutin-statistical-experiments.ipynb"
   type: grid
   grid-columns: 3
   sort: "date desc"
@@ -18,4 +16,4 @@ listing:
 page-layout: full
 ---
 
-Tutorials and adjacent topics that support trading research and quantitative analysis.
+Tutorials and mathematical foundations that support trading research and quantitative analysis.

@@ -1,35 +1,41 @@
 ---
-title: "Research"
-listing:
-  contents:
-    - "posts/model-strategies/*.ipynb"
-    - "posts/educational/tutorials/*.ipynb"
-    - "posts/educational/related-topics/*.ipynb"
-    - "posts/project-infrastructure/*.ipynb"
-    - "posts/exploratory-data-analysis/*.ipynb"
-    - "posts/model-strategies/*.qmd"
-    - "posts/educational/tutorials/*.qmd"
-    - "posts/educational/related-topics/*.qmd"
-    - "posts/project-infrastructure/*.qmd"
-    - "posts/exploratory-data-analysis/*.qmd"
-  type: grid
-  grid-columns: 3
-  sort: "date desc"
-  categories: true
-  filter-ui: true
-  sort-ui: [date, title]
-  feed: true
-  image-placeholder: "assets/research-placeholder-pencil.png"
+title: "Research Categories"
 page-layout: full
 ---
 
-This page collects reproducible explorations for the TimeAnalysis project.
-Each card is generated automatically from a Jupyter notebook or Quarto post
-committed to one of the research section folders.
+Reproducible explorations for the TimeAnalysis project, grouped by research area.
 
-## Sections
-
-- [Models & Strategies](model-strategies.qmd) - trading strategy and model research.
-- [Educational](educational.qmd) - tutorials and adjacent learning topics.
-- [Project Infrastructure](project-infrastructure.qmd) - runtime checks, UML, UI, and service documentation.
-- [Exploratory Data Analysis](exploratory-data-analysis.qmd) - data properties and feature exploration.
+<section class="category-grid" aria-label="Research categories">
+  <a class="research-section-card" href="model-strategies.html">
+    <img src="assets/model-zoo-backtest-comparison-cover-pencil.png" alt="Model comparison notebook cover">
+    <span class="section-card-body">
+      <span class="section-card-kicker">3 studies</span>
+      <span class="section-card-title">Models &amp; Strategies</span>
+      <span class="section-card-text">Trading models, forecasting approaches, and backtesting workflows.</span>
+    </span>
+  </a>
+  <a class="research-section-card" href="educational.html">
+    <img src="assets/math-behind-neural-networks-cover-pencil.png" alt="Neural network math notebook cover">
+    <span class="section-card-body">
+      <span class="section-card-kicker">4 studies</span>
+      <span class="section-card-title">Educational</span>
+      <span class="section-card-text">Tutorials and mathematical foundations for the research stack.</span>
+    </span>
+  </a>
+  <a class="research-section-card" href="project-infrastructure.html">
+    <img src="assets/freqtrade-backtester-smoke-test-cover-pencil.png" alt="Freqtrade smoke test notebook cover">
+    <span class="section-card-body">
+      <span class="section-card-kicker">1 study</span>
+      <span class="section-card-title">Infrastructure</span>
+      <span class="section-card-text">Runtime checks and service-level notes for reproducible experiments.</span>
+    </span>
+  </a>
+  <a class="research-section-card" href="exploratory-data-analysis.html">
+    <img src="assets/component-analysis-cover-pencil.png" alt="Component analysis notebook cover">
+    <span class="section-card-body">
+      <span class="section-card-kicker">1 study</span>
+      <span class="section-card-title">EDA</span>
+      <span class="section-card-text">Data structure, dimensionality reduction, and visualization research.</span>
+    </span>
+  </a>
+</section>
