@@ -27,14 +27,11 @@ dependencies = [
     "requests>=2.33.1",
     "jupyterlab",
     "freqtrade",
+    "ta"
 ]
 
-[tool.setuptools.package-dir]
-"" = "trading"
-
 [tool.setuptools.packages.find]
-where = ["trading"]
-exclude = ["freqtrade*"]
+where = ["."]
 
 [project.optional-dependencies]
 dev = [
@@ -61,13 +58,14 @@ url = "https://download.pytorch.org/whl/cu128"
 explicit = true
 
 [tool.ruff]
-line-length = 88exclude = ["freqtrade*"]
+line-length = 88
 target-version = "py311"
 extend-exclude = [
     ".venv",
     "literature",
     "time_analysis.egg-info",
     "docs",
+    "trading/freqtrade",
     "research/posts/**/*.ipynb",
 ]
 
@@ -97,4 +95,4 @@ line-ending = "lf"
 docstring-code-format = true
 
 [tool.pytest.ini_options]
-pythonpath = ["trading"]
+pythonpath = ["trading", "trading/freqtrade"]
