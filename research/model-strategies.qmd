@@ -2,9 +2,6 @@
 title: "Models & Strategies"
 listing:
   contents:
-    - "posts/educational/related-topics/patchtst-cuda-forecasting.ipynb"
-    - "posts/educational/related-topics/model-backtesting-pipeline.ipynb"
-    - "posts/educational/related-topics/model-zoo-backtest-comparison.ipynb"
   type: grid
   grid-columns: 3
   sort: "date desc"

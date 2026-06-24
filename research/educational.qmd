@@ -3,10 +3,6 @@ title: "Educational"
 listing:
   contents:
     - "posts/educational/related-topics/neural_ntworks/math_bihind_nn.ipynb"
-    - "posts/educational/related-topics/patchtst-cuda-forecasting.ipynb"
-    - "posts/educational/related-topics/model-backtesting-pipeline.ipynb"
-    - "posts/educational/related-topics/model-zoo-backtest-comparison.ipynb"
-    - "posts/educational/related-topics/freqtrade-backtester-smoke-test.ipynb"
     - "posts/educational/related-topics/parametric-estimates.ipynb"
     - "posts/educational/related-topics/sklearn-bybit-tutorial.ipynb"
     - "posts/educational/related-topics/lagutin-statistical-experiments.ipynb"

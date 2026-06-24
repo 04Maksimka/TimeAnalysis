@@ -2,7 +2,6 @@
 title: "Exploratory Data Analysis"
 listing:
   contents:
-    - "posts/educational/related-topics/component-analysis.ipynb"
   type: grid
   grid-columns: 3
   sort: "date desc"
