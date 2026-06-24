@@ -27,7 +27,8 @@ dependencies = [
     "requests>=2.33.1",
     "jupyterlab",
     "freqtrade",
-    "ta"
+    "ta",
+    "freqtrade"
 ]
 
 [tool.setuptools.packages.find]
