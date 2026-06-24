@@ -17,9 +17,9 @@ Reproducible explorations for the TimeAnalysis project, grouped by research area
   <a class="research-section-card" href="educational.html">
     <img src="assets/math-behind-neural-networks-cover-pencil.png" alt="Neural network math notebook cover">
     <span class="section-card-body">
-      <span class="section-card-kicker">4 studies</span>
+      <span class="section-card-kicker">9 studies</span>
       <span class="section-card-title">Educational</span>
-      <span class="section-card-text">Tutorials and mathematical foundations for the research stack.</span>
+      <span class="section-card-text">All current notebooks, tutorials, and mathematical foundations for the research stack.</span>
     </span>
   </a>
   <a class="research-section-card" href="project-infrastructure.html">
