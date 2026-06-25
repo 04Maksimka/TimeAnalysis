@@ -28,26 +28,21 @@ dependencies = [
     "jupyterlab",
     "freqtrade",
     "ta",
-    "freqtrade"
 ]
 
 [tool.setuptools.packages.find]
 where = ["."]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "ruff>=0.4",
-]
-
 [dependency-groups]
 dev = [
     "pytest>=8.0",
     "ruff>=0.4",
+    "pandas-stubs~=3.0.2",
 ]
 
 [tool.uv]
 cache-dir = ".uv/cache"
+default-groups = ["dev"]
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }
@@ -96,4 +91,5 @@ line-ending = "lf"
 docstring-code-format = true
 
 [tool.pytest.ini_options]
-pythonpath = ["trading", "trading/freqtrade"]
+pythonpath = [".", "trading", "trading/freqtrade"]
+addopts = "--basetemp=.pytest_tmp"

@@ -5,8 +5,9 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/trading/freqtrade" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/trading/.venv" />
     </content>
-    <orderEntry type="jdk" jdkName="uv (TimeAnalysis) (4)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="uv (TimeAnalysis) (5)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
