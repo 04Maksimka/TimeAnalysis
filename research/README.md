@@ -12,6 +12,13 @@ Jupyter notebooks and Quarto posts stored in section folders under
 - `posts/project-infrastructure/` - UML, UI, runtime checks, and service docs.
 - `posts/exploratory-data-analysis/` - data properties and feature generation.
 
+Educational posts use one broad category for listing filters:
+
+- `math statistics`
+- `ML algorithms`
+- `technical analysis`
+- `others`
+
 ## Publish a new research post
 
 1. Copy `posts/example-research.ipynb` into the matching section folder as
