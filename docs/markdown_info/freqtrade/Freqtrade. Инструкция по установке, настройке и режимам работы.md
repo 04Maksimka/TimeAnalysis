@@ -46,6 +46,19 @@
 
 ## Последовательность с нуля до live-trading на linux
 
+0. **Установить uv**
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+   Обновить shell
+   ```bash
+   source ~/.bashrc
+   ```
+   Проверка
+   ```bash
+   uv --version
+   ```
+   
 1. **Установить Freqtrade**
    ```bash
    git clone https://github.com/freqtrade/freqtrade.git
@@ -56,7 +69,7 @@
    ```
    Проверить установку:
    ```bash
-   freqtrade version
+   freqtrade --version
    ```
 
 2. **Создать рабочую директорию проекта**
@@ -75,27 +88,53 @@
    Пример `user_data/config-private.json`:
    ```json
    {
-     «exchange»: {
-       «key»: «YOUR_REAL_API_KEY»,
-       «secret»: «YOUR_REAL_API_SECRET»
+     "exchange": {
+       "key": "YOUR_REAL_API_KEY",
+       "secret": "YOUR_REAL_API_SECRET"
      },
-     «telegram»: {
-       «enabled»: true,
-       «token»: «YOUR_TELEGRAM_BOT_TOKEN»,
-       «chat_id»: «YOUR_CHAT_ID»
+     "telegram": {
+       "enabled": true,
+       "token": "YOUR_TELEGRAM_BOT_TOKEN",
+       "chat_id": "YOUR_CHAT_ID"
      }
    }
    ```
    Убедиться, что `config-private.json` не попадёт в git.
 
-4. **Создать стратегию**
+4. **Создать шаблон стратегии** (опционально)
    ```bash
-   freqtrade new-strategy --userdir user_data --strategy MyStrategy --template minimal
+   freqtrade new-strategy --userdir user_data\
+   --strategy MyStrategy --template minimal
    ```
-   После этого отредактировать файл:
+
+   Команда создаёт только **заготовку** стратегии.  
+   После этого нужно открыть файл и реализовать в нём свою торговую логику:
+	- добавить индикаторы в `populate_indicators()`
+	- задать условия входа в `populate_entry_trend()`
+	- задать условия выхода в `populate_exit_trend()`
+
+   Открыть файл можно, например, так:
    ```bash
    nano user_data/strategies/MyStrategy.py
    ```
+   **Либо скачать готовые стратегии из repo:**
+   ```bash 
+   cd user_data/strategies
+   git clone https://github.com/freqtrade/freqtrade-strategies.git
+   mkdir -p freqtrade_strategies
+   cp -r freqtrade-strategies/user_data/strategies/* freqtrade_strategies/
+   rm -rf freqtrade-strategies
+   cd ../.. #возвращаемся обратно
+   ```
+   **И подключать их по ключу  `--strategy-path`  (пример бэктеста):**
+   ```bash
+   freqtrade backtesting \
+    --userdir user_data \
+    --config user_data/config.json \
+    --strategy SampleStrategy \
+    --strategy-path freqtrade-strategies/
+   ```
+
 
 5. **Проверить, что стратегия загружается**
    ```bash
@@ -105,11 +144,7 @@
 6. **Скачать исторические данные**
    Пример: скачать данные за 365 дней для таймфреймов `5m` и `1h`.
    ```bash
-   freqtrade download-data \
-       --userdir user_data \
-       --config user_data/config.json \
-       --timeframes 5m 1h \
-       --days 365
+   freqtrade download-data --userdir user_data --config user_data/config.json --timeframes 5m 1h --days 365
    ```
 
 7. **Проверить скачанные данные**
@@ -119,39 +154,20 @@
 
 8. **Запустить первичный backtesting**
    ```bash
-   freqtrade backtesting \
-       --userdir user_data \
-       --config user_data/config.json \
-       --strategy MyStrategy \
-       --timeframe 5m \
-       --logfile user_data/logs/backtesting.log
+   freqtrade backtesting --userdir user_data --config user_data/config.json --strategy MyStrategy --timeframe 5m --logfile user_data/logs/backtesting.log
    ```
    Если стратегия использует конкретный период, лучше сразу задавать его явно:
    ```bash
-   freqtrade backtesting \
-       --userdir user_data \
-       --config user_data/config.json \
-       --strategy MyStrategy \
-       --timeframe 5m \
-       --timerange 20240101-20241231 \
-       --logfile user_data/logs/backtesting.log
+   freqtrade backtesting --userdir user_data --config user_data/config.json --strategy MyStrategy --timeframe 5m --timerange 20240101-20241231 --logfile user_data/logs/backtesting.log
    ```
 
 9. **Проверить стратегию на look-ahead и recursive bias**
    ```bash
-   freqtrade lookahead-analysis \
-       --userdir user_data \
-       --config user_data/config.json \
-       --strategy MyStrategy \
-       --logfile user_data/logs/lookahead.log
+   freqtrade lookahead-analysis --userdir user_data --config user_data/config.json --strategy MyStrategy --logfile user_data/logs/lookahead.log
    ```
 
    ```bash
-   freqtrade recursive-analysis \
-       --userdir user_data \
-       --config user_data/config.json \
-       --strategy MyStrategy \
-       --logfile user_data/logs/recursive.log
+   freqtrade recursive-analysis --userdir user_data --config user_data/config.json --strategy MyStrategy --logfile user_data/logs/recursive.log
    ```
 
 10. **Установить зависимости для hyperopt и запустить оптимизацию**
@@ -162,36 +178,18 @@
 
     Запуск hyperopt:
     ```bash
-    freqtrade hyperopt \
-        --userdir user_data \
-        --config user_data/config.json \
-        --strategy MyStrategy \
-        --hyperopt-loss SharpeHyperOptLossDaily \
-        --spaces buy sell \
-        --epochs 500 \
-        --logfile user_data/logs/hyperopt.log
+    freqtrade hyperopt --userdir user_data --config user_data/config.json --strategy MyStrategy --hyperopt-loss SharpeHyperOptLossDaily --spaces buy sell --epochs 500 --logfile user_data/logs/hyperopt.log
     ```
 
 11. **Повторно запустить backtesting с новыми параметрами**
     ```bash
-    freqtrade backtesting \
-        --userdir user_data \
-        --config user_data/config.json \
-        --strategy MyStrategy \
-        --cache none \
-        --logfile user_data/logs/backtesting-after-hyperopt.log
+    freqtrade backtesting --userdir user_data --config user_data/config.json --strategy MyStrategy --cache none --logfile user_data/logs/backtesting-after-hyperopt.log
     ```
 
 12. **Проверить стратегию на out-of-sample периоде**
     То есть на периоде, который не использовался в hyperopt. Пример:
     ```bash
-    freqtrade backtesting \
-        --userdir user_data \
-        --config user_data/config.json \
-        --strategy MyStrategy \
-        --timerange 20240701-20241231 \
-        --cache none \
-        --logfile user_data/logs/backtesting-oos.log
+    freqtrade backtesting --userdir user_data --config user_data/config.json --strategy MyStrategy --timerange 20240701-20241231 --cache none --logfile user_data/logs/backtesting-oos.log
     ```
 
 13. **При необходимости визуализировать результаты**
@@ -202,20 +200,12 @@
 
     График свечей и сигналов:
     ```bash
-    freqtrade plot-dataframe \
-        --userdir user_data \
-        --config user_data/config.json \
-        --strategy MyStrategy \
-        --pair BTC/USDT \
-        --timeframe 5m
+    freqtrade plot-dataframe --userdir user_data --config user_data/config.json --strategy MyStrategy --pair BTC/USDT --timeframe 5m
     ```
 
     График equity / прибыли:
     ```bash
-    freqtrade plot-profit \
-        --userdir user_data \
-        --config user_data/config.json \
-        --strategy MyStrategy
+    freqtrade plot-profit --userdir user_data --config user_data/config.json --strategy MyStrategy
     ```
 
 14. **Установить FreqUI**
@@ -226,22 +216,22 @@
 15. **Включить API Server и FreqUI в `config.json`**
     Сгенерировать секреты:
     ```bash
-    python -c «import secrets; print(secrets.token_hex(32))»
-    python -c «import secrets; print(secrets.token_urlsafe(25))»
+    python -c "import secrets; print(secrets.token_hex(32))"
+    python -c "import secrets; print(secrets.token_urlsafe(25))"
     ```
 
     Добавить в `user_data/config.json` секцию:
     ```json
-    «api_server»: {
-      «enabled»: true,
-      «listen_ip_address»: «127.0.0.1»,
-      «listen_port»: 8080,
-      «username»: «freqtrader»,
-      «password»: «StrongPassword123!»,
-      «jwt_secret_key»: «PASTE_HEX_SECRET_HERE»,
-      «ws_token»: «PASTE_WS_TOKEN_HERE»,
-      «CORS_origins»: [],
-      «enable_openapi»: false
+    "api_server": {
+      "enabled": true,
+      "listen_ip_address": "127.0.0.1",
+      "listen_port": 8080,
+      "username": "freqtrader",
+      "password": "StrongPassword123!",
+      "jwt_secret_key": "PASTE_HEX_SECRET_HERE",
+      "ws_token": "PASTE_WS_TOKEN_HERE",
+      "CORS_origins": [],
+      "enable_openapi": false
     }
     ```
     > `CORS_origins` нужен только если вы используете отдельный frontend на другом origin.  
@@ -250,16 +240,12 @@
 16. **Запустить dry run**
     Убедиться, что в `config.json`:
     ```json
-    «dry_run»: true
+    "dry_run": true
     ```
 
     Затем запустить:
     ```bash
-    freqtrade trade \
-        --userdir user_data \
-        --config user_data/config.json \
-        --strategy MyStrategy \
-        --logfile user_data/logs/freqtrade-dryrun.log
+    freqtrade trade --userdir user_data --config user_data/config.json --strategy MyStrategy --logfile user_data/logs/freqtrade-dryrun.log
     ```
 
 17. **Настроить Telegram**
@@ -267,17 +253,17 @@
     2. Получить свой `chat_id` через **@userinfobot**
     3. Добавить в `config.json` или `config-private.json` секцию:
        ```json
-       «telegram»: {
-         «enabled»: true,
-         «token»: «YOUR_TELEGRAM_BOT_TOKEN»,
-         «chat_id»: «YOUR_CHAT_ID»,
-         «notification_settings»: {
-           «entry»: «on»,
-           «exit»: «on»,
-           «entry_fill»: «on»,
-           «exit_fill»: «on»,
-           «status»: «on»,
-           «warning»: «on»
+       "telegram": {
+         "enabled": true,
+         "token": "YOUR_TELEGRAM_BOT_TOKEN",
+         "chat_id": "YOUR_CHAT_ID",
+         "notification_settings": {
+           "entry": "on",
+           "exit": "on",
+           "entry_fill": "on",
+           "exit_fill": "on",
+           "status": "on",
+           "warning": "on"
          }
        }
        ```
@@ -304,7 +290,7 @@
 20. **Подготовить live-конфиг**
     1. В `config.json` переключить:
        ```json
-       «dry_run»: false
+       "dry_run": false
        ```
     2. Добавить реальные API-ключи в `user_data/config-private.json`
     3. Оставить консервативный `stake_amount`
@@ -312,12 +298,7 @@
 
 21. **Запустить live trading**
     ```bash
-    freqtrade trade \
-        --userdir user_data \
-        --config user_data/config.json \
-        --config user_data/config-private.json \
-        --strategy MyStrategy \
-        --logfile user_data/logs/freqtrade-live.log
+    freqtrade trade --userdir user_data --config user_data/config.json --config user_data/config-private.json --strategy MyStrategy --logfile user_data/logs/freqtrade-live.log
     ```
 
 22. **Настроить автозапуск через systemd**
@@ -601,9 +582,7 @@ API-ключи и токены не должны попадать в git. Два
 **Два файла конфига:**
 
 ```bash
-freqtrade trade \
-    --config user_data/config.json \
-    --config user_data/config-private.json
+freqtrade trade --config user_data/config.json --config user_data/config-private.json
 ```
 
 `config.json` — публичный, в git. `config-private.json` — в `.gitignore`:
@@ -702,7 +681,7 @@ class MyStrategy(IStrategy):
 | `INTERFACE_VERSION = 3` | Версия контракта с фреймворком |
 | `timeframe` | Период свечи: `1m`, `5m`, `15m`, `1h`, `4h`, `1d` |
 | `stoploss` | Стоп-лосс как доля: `-0.05` = −5% |
-| `minimal_roi` | Таблица «время в минутах → минимальная прибыль для выхода» |
+| `minimal_roi` | Таблица "время в минутах → минимальная прибыль для выхода" |
 | `startup_candle_count` | Свечи для прогрева индикаторов (не участвуют в торговле) |
 | `populate_indicators()` | Добавить колонки индикаторов в DataFrame |
 | `populate_entry_trend()` | Проставить `enter_long = 1` или `enter_short = 1` |
@@ -869,15 +848,10 @@ class MyFreqAIStrategy(IStrategy):
 
 ```bash
 # Бэктест
-freqtrade backtesting \
-    --strategy MyFreqAIStrategy \
-    --freqaimodel LightGBMRegressor \
-    --timerange 20240101-20250101
+freqtrade backtesting --strategy MyFreqAIStrategy --freqaimodel LightGBMRegressor --timerange 20240101-20250101
 
 # Dry run / Live
-freqtrade trade \
-    --strategy MyFreqAIStrategy \
-    --freqaimodel LightGBMRegressor
+freqtrade trade --strategy MyFreqAIStrategy --freqaimodel LightGBMRegressor
 ```
 
 ---
@@ -889,10 +863,7 @@ freqtrade trade \
 Backtesting и Hyperopt работают на исторических данных. API-ключи не нужны.
 
 ```bash
-freqtrade download-data \
-    --config user_data/config.json \
-    --timeframes 5m 1h \
-    --timerange 20240101-20250101
+freqtrade download-data --config user_data/config.json --timeframes 5m 1h --timerange 20240101-20250101
 ```
 
 **Параметры:**
@@ -913,13 +884,10 @@ freqtrade download-data \
 
 ```bash
 # Спот, несколько пар и таймфреймов, за год
-freqtrade download-data --exchange binance \
-    --pairs BTC/USDT ETH/USDT SOL/USDT \
-    --timeframes 5m 1h --days 365
+freqtrade download-data --exchange binance --pairs BTC/USDT ETH/USDT SOL/USDT --timeframes 5m 1h --days 365
 
 # Фьючерсы (автоматически скачивает mark price и funding rate)
-freqtrade download-data --exchange binance \
-    --pairs BTC/USDT:USDT --trading-mode futures
+freqtrade download-data --exchange binance --pairs BTC/USDT:USDT --trading-mode futures
 ```
 
 **Сколько данных нужно:**
@@ -935,10 +903,7 @@ freqtrade download-data --exchange binance \
 Если данные уже скачаны в одном формате, а нужен другой (например, из json в feather для ускорения бэктестов):
 
 ```bash
-freqtrade convert-data \
-    --format-from json \
-    --format-to feather \
-    --datadir user_data/data/binance
+freqtrade convert-data --format-from json --format-to feather --datadir user_data/data/binance
 ```
 
 **Параметры:**
@@ -968,11 +933,7 @@ freqtrade list-data --userdir user_data --show-timerange
 ### 5.1. Backtesting — проверка на истории
 
 ```bash
-freqtrade backtesting \
-    --config user_data/config.json \
-    --strategy MyStrategy \
-    --timeframe 5m \
-    --timerange 20240101-20250101
+freqtrade backtesting --config user_data/config.json --strategy MyStrategy --timeframe 5m --timerange 20240101-20250101
 ```
 
 **Параметры:**
@@ -1038,14 +999,10 @@ Freqtrade предоставляет два инструмента для про
 
 ```bash
 # Проверка look-ahead bias
-freqtrade lookahead-analysis \
-    --strategy MyStrategy \
-    --timerange 20240101-20250101
+freqtrade lookahead-analysis --strategy MyStrategy --timerange 20240101-20250101
 
 # Проверка recursive bias
-freqtrade recursive-analysis \
-    --strategy MyStrategy \
-    --timerange 20240101-20250101
+freqtrade recursive-analysis --strategy MyStrategy --timerange 20240101-20250101
 ```
 
 **Параметры `lookahead-analysis`:**
@@ -1080,13 +1037,7 @@ pip install -r requirements-hyperopt.txt
 **Запуск:**
 
 ```bash
-freqtrade hyperopt \
-    --config user_data/config.json \
-    --strategy MyStrategy \
-    --hyperopt-loss SharpeHyperOptLossDaily \
-    --spaces buy sell \
-    --epochs 500 \
-    --timerange 20240101-20250101
+freqtrade hyperopt --config user_data/config.json --strategy MyStrategy --hyperopt-loss SharpeHyperOptLossDaily --spaces buy sell --epochs 500 --timerange 20240101-20250101
 ```
 
 **Параметры:**
@@ -1142,10 +1093,7 @@ pip install -r requirements-plot.txt
 **График свечей со сделками:**
 
 ```bash
-freqtrade plot-dataframe \
-    --strategy MyStrategy \
-    --pair BTC/USDT \
-    --timerange 20240101-20240201
+freqtrade plot-dataframe --strategy MyStrategy --pair BTC/USDT --timerange 20240101-20240201
 ```
 
 Открывает HTML-файл в браузере с интерактивным графиком: свечи, все индикаторы из `populate_indicators()`, маркеры входов и выходов, причины выхода.
@@ -1166,9 +1114,7 @@ freqtrade plot-dataframe \
 **График equity curve:**
 
 ```bash
-freqtrade plot-profit \
-    --strategy MyStrategy \
-    --timerange 20240101-20250101
+freqtrade plot-profit --strategy MyStrategy --timerange 20240101-20250101
 ```
 
 Строит три графика: накопленная прибыль, прибыль по парам, количество одновременных позиций. Полезно чтобы быстро увидеть какие пары тянут вниз и в какие периоды стратегия работала плохо.
@@ -1253,10 +1199,7 @@ API-ключи биржи не нужны.
 ### Запуск
 
 ```bash
-freqtrade trade \
-    --config user_data/config.json \
-    --strategy MyStrategy \
-    --logfile user_data/logs/freqtrade.log
+freqtrade trade --config user_data/config.json --strategy MyStrategy --logfile user_data/logs/freqtrade.log
 ```
 
 Бот работает до ручной остановки (`Ctrl+C` или `/stop` в Telegram).
@@ -1274,10 +1217,7 @@ freqtrade trade \
 По умолчанию Freqtrade пишет логи только в консоль. Чтобы сохранять в файл, добавьте `--logfile` к любой команде:
 
 ```bash
-freqtrade trade \
-    --config user_data/config.json \
-    --strategy MyStrategy \
-    --logfile user_data/logs/freqtrade.log
+freqtrade trade --config user_data/config.json --strategy MyStrategy --logfile user_data/logs/freqtrade.log
 ```
 
 **Уровни детализации:**
@@ -1334,7 +1274,7 @@ print(secrets.token_urlsafe(25))  # для ws_token
 
 **Доступ:** после запуска бота открыть `http://localhost:8080`, ввести username/password из конфига.
 
-**Swagger API:** при `«enable_openapi»: true` — интерактивная документация по адресу `http://localhost:8080/docs`.
+**Swagger API:** при `"enable_openapi": true` — интерактивная документация по адресу `http://localhost:8080/docs`.
 
 ### 8.3. Telegram — уведомления и команды
 
@@ -1409,11 +1349,7 @@ print(secrets.token_urlsafe(25))  # для ws_token
 ### Запуск
 
 ```bash
-freqtrade trade \
-    --config user_data/config.json \
-    --config user_data/config-private.json \
-    --strategy MyStrategy \
-    --logfile user_data/logs/freqtrade.log
+freqtrade trade --config user_data/config.json --config user_data/config-private.json --strategy MyStrategy --logfile user_data/logs/freqtrade.log
 ```
 
 ### 9.2. Автозапуск и обслуживание
