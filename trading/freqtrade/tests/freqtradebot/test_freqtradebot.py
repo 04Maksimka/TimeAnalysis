@@ -132,6 +132,27 @@ def test_bot_cleanup_db_errors(mocker, default_conf_usdt, caplog) -> None:
     assert freqtrade.emc.shutdown.call_count == 1
 
 
+def test_bot_cleanup_before_db_init(mocker, default_conf_usdt) -> None:
+    freqtrade = get_patched_freqtradebot(mocker, default_conf_usdt)
+    check_open_trades = mocker.patch(
+        "freqtrade.freqtradebot.FreqtradeBot.check_for_open_trades"
+    )
+    commit = mocker.patch("freqtrade.freqtradebot.Trade.commit")
+    trade_session = getattr(Trade, "session", None)
+
+    if hasattr(Trade, "session"):
+        delattr(Trade, "session")
+
+    try:
+        freqtrade.cleanup()
+    finally:
+        if trade_session is not None:
+            Trade.session = trade_session
+
+    assert check_open_trades.call_count == 0
+    assert commit.call_count == 0
+
+
 @pytest.mark.parametrize("runmode", [RunMode.DRY_RUN, RunMode.LIVE])
 def test_order_dict(default_conf_usdt, mocker, runmode, caplog) -> None:
     patch_RPCManager(mocker)

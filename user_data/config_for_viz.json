@@ -10,8 +10,7 @@
   "cancel_open_orders_on_exit": false,
   "trading_mode": "spot",
   "timeframe": "5m",
-  "strategy": "ConfigurableVisualStrategy",
-  "strategy_path": "C:/WorkPrograms/TimeAnalysis/infrastructure/vizualization_pipline",
+  "strategy": "VisualOnlyStrategy",
   "dataformat_ohlcv": "feather",
   "dataformat_trades": "feather",
   "unfilledtimeout": {
@@ -39,8 +38,19 @@
     "name": "binance",
     "key": "",
     "secret": "",
-    "ccxt_config": {},
-    "ccxt_async_config": {},
+    "ccxt_config": {
+      "options": {
+        "defaultType": "spot",
+        "fetchMarkets": {
+          "types": [
+            "spot"
+          ]
+        }
+      }
+    },
+    "ccxt_async_config": {
+      "aiohttp_use_threaded_resolver": true
+    },
     "pair_whitelist": [
       "BTC/USDT",
       "ETH/USDT",

@@ -212,7 +212,8 @@ class FreqtradeBot(LoggingMixin):
             if self.config["cancel_open_orders_on_exit"]:
                 self.cancel_all_open_orders()
 
-            self.check_for_open_trades()
+            if getattr(Trade, "session", None) is not None:
+                self.check_for_open_trades()
         except Exception as e:
             logger.warning(f"Exception during cleanup: {e.__class__.__name__} {e}")
 
@@ -227,7 +228,7 @@ class FreqtradeBot(LoggingMixin):
         if getattr(self, "exchange", None):
             self.exchange.close()
         try:
-            if hasattr(Trade, "session"):
+            if getattr(Trade, "session", None) is not None:
                 Trade.commit()
         except Exception:
             # Exceptions here will be happening if the db disappeared.

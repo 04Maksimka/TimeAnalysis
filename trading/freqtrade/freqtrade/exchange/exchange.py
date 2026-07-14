@@ -7,6 +7,7 @@ import asyncio
 import inspect
 import logging
 import signal
+import ssl
 from collections.abc import Coroutine, Generator
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
@@ -15,6 +16,7 @@ from threading import Lock
 from typing import Any, Literal, TypeGuard, TypeVar
 from uuid import uuid4
 
+import aiohttp
 import ccxt
 import ccxt.pro as ccxt_pro
 from ccxt import TICK_SIZE
@@ -377,6 +379,13 @@ class Exchange:
         """
         Initialize ccxt with given config and return valid ccxt instance.
         """
+        ccxt_kwargs = deepcopy(ccxt_kwargs)
+        use_threaded_resolver = False
+        if not sync:
+            use_threaded_resolver = bool(
+                ccxt_kwargs.pop("aiohttp_use_threaded_resolver", False)
+            )
+
         # Find matching class for the given exchange name
         name = exchange_config["name"]
         if sync:
@@ -423,7 +432,46 @@ class Exchange:
         if self.get_option("supports_demo_trading") and exchange_config.get("demo_trading", False):
             api.enable_demo_trading(True)
 
+        if use_threaded_resolver:
+            self._init_ccxt_threaded_resolver(api)
+
         return api
+
+    def _init_ccxt_threaded_resolver(self, api: ccxt.Exchange) -> None:
+        """
+        Initialize async CCXT's aiohttp session with the system DNS resolver.
+
+        aiohttp uses aiodns/c-ares when aiodns is installed. On some Windows setups,
+        c-ares can time out while the system resolver still works.
+        """
+        if not hasattr(api, "session") or getattr(api, "session", None) is not None:
+            return
+
+        if getattr(api, "asyncio_loop", None) is None:
+            api.asyncio_loop = self.loop
+            if getattr(api, "throttler", None) is not None:
+                api.throttler.loop = self.loop
+
+        if getattr(api, "ssl_context", None) is None:
+            api.ssl_context = (
+                ssl.create_default_context(cafile=api.cafile) if api.verify else api.verify
+            )
+            if api.ssl_context and api.safe_bool(api.options, "include_OS_certificates", False):
+                os_default_paths = ssl.get_default_verify_paths()
+                if os_default_paths.cafile and os_default_paths.cafile != api.cafile:
+                    api.ssl_context.load_verify_locations(cafile=os_default_paths.cafile)
+
+        api.tcp_connector = aiohttp.TCPConnector(
+            ssl=api.ssl_context,
+            loop=api.asyncio_loop,
+            enable_cleanup_closed=True,
+            resolver=aiohttp.ThreadedResolver(loop=api.asyncio_loop),
+        )
+        api.session = aiohttp.ClientSession(
+            loop=api.asyncio_loop,
+            connector=api.tcp_connector,
+            trust_env=api.aiohttp_trust_env,
+        )
 
     @property
     def _ccxt_config(self) -> dict:
