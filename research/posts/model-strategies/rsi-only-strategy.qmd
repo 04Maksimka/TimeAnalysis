@@ -1,0 +1,168 @@
+---
+title: "RSI-only strategy: Freqtrade Hyperopt"
+description: "Long-only mean-reversion strategy based only on RSI, optimized with Freqtrade Hyperopt."
+author: "TimeAnalysis Team"
+date: "2026-07-14"
+categories: ["Freqtrade", "Backtesting", "Strategies", "RSI"]
+image: ../../assets/model-backtesting-pipeline-cover-pencil.png
+---
+
+## Goal
+
+This experiment builds the smallest useful RSI strategy for Freqtrade: only one
+indicator, no trend filters, no extra guards, and no ML. The strategy is
+long-only and mean-reverting:
+
+- enter long when RSI crosses below the lower RSI boundary;
+- exit long when RSI crosses above the upper RSI boundary;
+- keep ROI effectively disabled with `minimal_roi = {"0": 100}`;
+- keep an emergency-wide stoploss at `-0.99`, so normal exits are RSI exits.
+
+The implementation lives in `user_data/strategies/RsiOnlyStrategy.py`, with a
+dedicated config in `user_data/config_rsi_only_1h.json`.
+
+## Can Freqtrade optimize RSI parameters?
+
+Yes. Freqtrade can optimize RSI boundaries and RSI period internally with
+Hyperopt. The strategy exposes the parameters as `IntParameter`:
+
+| Parameter | Hyperopt space | Range | Best value |
+|---|---:|---:|---:|
+| `buy_rsi_period` | `buy` | 7-30 | 22 |
+| `buy_rsi_lower` | `buy` | 10-45 | 18 |
+| `sell_rsi_upper` | `sell` | 55-90 | 57 |
+
+The period is the subtle part: because RSI period changes the indicator itself,
+the strategy calculates RSI columns with `self.buy_rsi_period.range`. This is a
+standard Freqtrade pattern for optimizing indicator periods without recalculating
+the whole dataframe incorrectly for every epoch.
+
+## Reproduction
+
+The commands below were run from `C:\WorkPrograms\TimeAnalysis`.
+
+```powershell
+uv pip install -r trading/freqtrade/requirements-hyperopt.txt
+```
+
+`optuna` was not installed initially, so the Hyperopt optional dependencies were
+installed into the current `.venv`.
+
+```powershell
+uv run freqtrade list-strategies --userdir user_data
+.\.venv\Scripts\ruff.exe check user_data\strategies\RsiOnlyStrategy.py
+```
+
+`--strategy-path user_data/strategies` is intentionally omitted. With
+`--userdir user_data`, Freqtrade already scans `user_data/strategies`; passing
+the same path again causes duplicate strategy entries.
+
+```powershell
+uv run freqtrade download-data --userdir user_data --config user_data/config_rsi_only_1h.json --timeframes 1h --timerange 20250101-20260714
+```
+
+Downloaded data:
+
+- exchange: Binance spot;
+- timeframe: `1h`;
+- pairs: `BTC/USDT`, `ETH/USDT`, `BNB/USDT`, `XRP/USDT`, `SOL/USDT`,
+  `TRX/USDT`, `DOGE/USDT`, `ADA/USDT`, `LINK/USDT`, `AVAX/USDT`;
+- downloaded candles: 13,434 per pair.
+
+Hyperopt command:
+
+```powershell
+uv run freqtrade hyperopt --userdir user_data --config user_data/config_rsi_only_1h.json --strategy RsiOnlyStrategy --timeframe 1h --timerange 20250101-20260714 --spaces buy sell --hyperopt-loss ProfitDrawDownHyperOptLoss -e 300 --random-state 42 --min-trades 10 -j -2
+```
+
+Best Hyperopt epoch: 277/300, objective `-56.89194`, 26 trades, 19 wins, 7
+losses.
+
+Final backtest command:
+
+```powershell
+uv run freqtrade backtesting --userdir user_data --config user_data/config_rsi_only_1h.json --strategy RsiOnlyStrategy --timeframe 1h --timerange 20250101-20260714 --export trades --breakdown month --cache none
+```
+
+Artifacts:
+
+- Hyperopt result: `user_data/hyperopt_results/strategy_RsiOnlyStrategy_2026-07-14_21-55-13.fthypt`;
+- exported parameters: `user_data/strategies/RsiOnlyStrategy.json`;
+- final backtest: `user_data/backtest_results/backtest-result-2026-07-14_22-02-06.zip`.
+
+## Backtest results
+
+The final backtest automatically loaded `RsiOnlyStrategy.json`.
+
+| Metric | Value |
+|---|---:|
+| Backtest period | 2025-01-05 04:00:00 - 2026-07-14 00:00:00 |
+| Starting balance | 100 USDT |
+| Final balance | 160.714 USDT |
+| Absolute profit | 60.714 USDT |
+| Total profit | 60.71% |
+| Market change | -52.46% |
+| Trades | 26 |
+| Win / draw / loss | 19 / 0 / 7 |
+| Win rate | 73.1% |
+| Average profit per trade | 5.79% |
+| Average duration | 3 days, 2:18:00 |
+| Profit factor | 4.60 |
+| Sharpe | 0.57 |
+| Sortino | 0.99 |
+| Calmar | 30.76 |
+| SQN | 3.20 |
+| Max account drawdown | 11.516 USDT / 6.81% |
+| Drawdown duration | 119 days, 14:00:00 |
+| Best pair | XRP/USDT, 20.05% |
+| Worst pair | BTC/USDT, -4.02% |
+
+Per-pair result:
+
+| Pair | Trades | Profit, USDT | Profit | Win rate |
+|---|---:|---:|---:|---:|
+| XRP/USDT | 4 | 20.055 | 20.05% | 100.0% |
+| DOGE/USDT | 4 | 16.631 | 16.63% | 75.0% |
+| ADA/USDT | 3 | 12.009 | 12.01% | 100.0% |
+| TRX/USDT | 4 | 7.826 | 7.83% | 75.0% |
+| SOL/USDT | 1 | 3.494 | 3.49% | 100.0% |
+| BNB/USDT | 4 | 3.227 | 3.23% | 75.0% |
+| ETH/USDT | 5 | 1.497 | 1.50% | 40.0% |
+| LINK/USDT | 0 | 0.000 | 0.00% | 0.0% |
+| AVAX/USDT | 0 | 0.000 | 0.00% | 0.0% |
+| BTC/USDT | 1 | -4.023 | -4.02% | 0.0% |
+
+Monthly breakdown:
+
+| Month | Trades | Profit, USDT | Win / loss |
+|---|---:|---:|---:|
+| 2025-01 | 2 | 4.965 | 2 / 0 |
+| 2025-02 | 3 | 10.345 | 3 / 0 |
+| 2025-03 | 0 | 0.000 | 0 / 0 |
+| 2025-04 | 3 | 23.482 | 3 / 0 |
+| 2025-05 | 0 | 0.000 | 0 / 0 |
+| 2025-06 | 1 | 1.905 | 1 / 0 |
+| 2025-07 | 0 | 0.000 | 0 / 0 |
+| 2025-08 | 0 | 0.000 | 0 / 0 |
+| 2025-09 | 2 | 2.380 | 1 / 1 |
+| 2025-10 | 3 | 12.018 | 3 / 0 |
+| 2025-11 | 1 | -2.485 | 0 / 1 |
+| 2025-12 | 0 | 0.000 | 0 / 0 |
+| 2026-01 | 3 | 2.477 | 1 / 2 |
+| 2026-02 | 5 | 7.444 | 4 / 1 |
+| 2026-03 | 0 | 0.000 | 0 / 0 |
+| 2026-04 | 0 | 0.000 | 0 / 0 |
+| 2026-05 | 1 | -0.811 | 0 / 1 |
+| 2026-06 | 2 | -1.005 | 1 / 1 |
+
+## Notes and limitations
+
+The optimized strategy is very selective: only 26 trades over about 554
+backtest days. That selectivity is probably why drawdown looks controlled, but
+it also means the estimate is fragile.
+
+This is an in-sample Hyperopt plus final backtest on the same timerange. The
+numbers are useful for checking whether the RSI-only idea is worth deeper
+research, but they are not evidence of live robustness. A better next experiment
+is a walk-forward split: optimize on an earlier window, then test untouched data
+from a later window.

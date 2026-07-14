@@ -3,14 +3,14 @@
   "max_open_trades": 3,
   "stake_currency": "USDT",
   "stake_amount": "unlimited",
-  "tradable_balance_ratio": 1.00,
+  "tradable_balance_ratio": 1.0,
   "fiat_display_currency": "USD",
   "dry_run": true,
   "dry_run_wallet": 100,
   "cancel_open_orders_on_exit": false,
   "trading_mode": "spot",
-  "timeframe": "1d",
-  "strategy": "VisualOnlyStrategy",
+  "timeframe": "1h",
+  "strategy": "RsiOnlyStrategy",
   "dataformat_ohlcv": "feather",
   "dataformat_trades": "feather",
   "unfilledtimeout": {
@@ -92,7 +92,7 @@
     "username": "freqtrader",
     "password": "replace-me"
   },
-  "bot_name": "timeanalysis-binance-visual",
+  "bot_name": "timeanalysis-binance-rsi-only-1h",
   "initial_state": "stopped",
   "force_entry_enable": false,
   "internals": {

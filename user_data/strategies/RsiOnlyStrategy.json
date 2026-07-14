@@ -1,0 +1,29 @@
+{
+  "strategy_name": "RsiOnlyStrategy",
+  "params": {
+    "roi": {
+      "0": 100
+    },
+    "stoploss": {
+      "stoploss": -0.99
+    },
+    "trailing": {
+      "trailing_stop": false,
+      "trailing_stop_positive": null,
+      "trailing_stop_positive_offset": 0.0,
+      "trailing_only_offset_is_reached": false
+    },
+    "max_open_trades": {
+      "max_open_trades": 3
+    },
+    "buy": {
+      "buy_rsi_lower": 18,
+      "buy_rsi_period": 22
+    },
+    "sell": {
+      "sell_rsi_upper": 57
+    }
+  },
+  "ft_stratparam_v": 1,
+  "export_time": "2026-07-14 19:01:14.726130+00:00"
+}
