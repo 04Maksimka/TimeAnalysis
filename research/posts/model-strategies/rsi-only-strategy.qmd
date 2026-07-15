@@ -383,6 +383,49 @@ to `-8.94%`, but it did not produce a profitable or statistically convincing
 strategy. The next research step should be a proper walk-forward optimization
 with multiple rolling windows, not a single train/test split.
 
+### Stoploss -5% sensitivity check
+
+After the train/test experiment, a fixed `5%` stoploss was checked against the
+current optimized parameters. In Freqtrade this is configured as
+`stoploss = -0.05`; a positive `0.05` is not the strategy value.
+
+This was a post-hoc sensitivity check, not a fresh Hyperopt run. The test used a
+temporary config-level stoploss override, which Freqtrade applies after loading
+strategy parameters from `*.json`.
+
+| Strategy / window | Original result | With `stoploss = -0.05` | Change |
+|---|---:|---:|---|
+| `RsiOnly5mStrategy`, 2026 test | -12.31%, DD 23.61% | +4.93%, DD 8.00% | Better |
+| `RsiOnlyRiskManaged5mStrategy`, 2026 test | -8.94%, DD 10.29% | -5.01%, DD 6.41% | Smaller loss, smaller drawdown |
+| `RsiOnlyStrategy`, 1h in-sample full period | +60.71%, DD 6.81% | +3.08%, DD 26.30% | Worse |
+
+Detailed `5m` test metrics:
+
+| Strategy | Trades | Profit | Max drawdown | Win rate | Profit factor | Sharpe | Sortino |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Baseline RSI-only, original | 57 | -12.314 USDT / -12.31% | 23.712 USDT / 23.61% | 71.9% | 0.51 | -1.04 | -0.82 |
+| Baseline RSI-only, `-5%` stoploss | 69 | 4.934 USDT / 4.93% | 8.004 USDT / 8.00% | 63.8% | 1.46 | 1.07 | 3.07 |
+| Risk-managed RSI, original | 89 | -8.936 USDT / -8.94% | 10.291 USDT / 10.29% | 57.3% | 0.22 | -1.99 | -1.43 |
+| Risk-managed RSI, `-5%` stoploss | 90 | -5.006 USDT / -5.01% | 6.413 USDT / 6.41% | 53.3% | 0.34 | -2.44 | -2.17 |
+
+The fixed `-5%` stoploss is promising for the `5m` baseline because it turns the
+2026 test from negative to positive and cuts drawdown sharply. However, it does
+not transfer cleanly to the 1h strategy, and the risk-managed strategy remains
+negative. Since this check was made after seeing the test result, it also starts
+to use the test set as a design signal. The next defensible experiment is to add
+`stoploss` to Hyperopt on the train window only, then evaluate the selected
+stoploss on a fresh untouched test window or through rolling walk-forward
+splits.
+
+Artifacts from this check:
+
+- `user_data/backtest_results/backtest-result-2026-07-15_12-11-46.zip`:
+  `RsiOnly5mStrategy`, 2026 test, `stoploss = -0.05`;
+- `user_data/backtest_results/backtest-result-2026-07-15_12-12-28.zip`:
+  `RsiOnlyRiskManaged5mStrategy`, 2026 test, `stoploss = -0.05`;
+- `user_data/backtest_results/backtest-result-2026-07-15_12-13-52.zip`:
+  `RsiOnlyStrategy`, 1h full period, `stoploss = -0.05`.
+
 ## Notes and limitations
 
 The optimized strategy is very selective: only 26 trades over about 554
