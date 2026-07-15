@@ -42,11 +42,12 @@ the whole dataframe incorrectly for every epoch.
 The commands below were run from `C:\WorkPrograms\TimeAnalysis`.
 
 ```powershell
-uv pip install -r trading/freqtrade/requirements-hyperopt.txt
+uv sync --dev
 ```
 
-`optuna` was not installed initially, so the Hyperopt optional dependencies were
-installed into the current `.venv`.
+Freqtrade Hyperopt needs `optuna`, `cmaes`, and `filelock` in addition to the
+normal bot dependencies. These are now tracked in `pyproject.toml`, so a normal
+`uv sync --dev` is enough.
 
 ```powershell
 uv run freqtrade list-strategies --userdir user_data
@@ -89,6 +90,53 @@ Artifacts:
 - Hyperopt result: `user_data/hyperopt_results/strategy_RsiOnlyStrategy_2026-07-14_21-55-13.fthypt`;
 - exported parameters: `user_data/strategies/RsiOnlyStrategy.json`;
 - final backtest: `user_data/backtest_results/backtest-result-2026-07-14_22-02-06.zip`.
+
+## Visual inspection
+
+Freqtrade has two practical ways to inspect buy and sell points.
+
+The preferred interactive path is FreqUI:
+
+```powershell
+uv run freqtrade webserver --userdir user_data --config user_data/config_rsi_only_1h.json
+```
+
+Then open `http://127.0.0.1:8080`, log in with the local credentials from the
+config, and use the Backtesting view. FreqUI can load previous backtest results
+from `user_data/backtest_results`, including
+`backtest-result-2026-07-14_22-02-06.zip`. Open a pair chart from that result
+and load the strategy plot configuration. `RsiOnlyStrategy` exposes an RSI
+subplot with `rsi`, `rsi_lower`, and `rsi_upper`, so entries, exits, and RSI
+thresholds can be inspected on the same chart.
+
+For the static research report, the saved backtest zip and OHLCV feather data
+were converted into PNG figures.
+
+![XRP/USDT trade markers](assets/rsi-only-xrp-trades.png)
+
+The best pair was `XRP/USDT`, so the first plot focuses on its four trades.
+Green triangles are entries, red triangles are exits, and labels show trade
+profit.
+
+![XRP/USDT RSI thresholds](assets/rsi-only-xrp-rsi.png)
+
+The RSI plot shows why these trades fired: entries happen when RSI(22) crosses
+below the lower boundary `18`, and exits happen when RSI(22) crosses above the
+upper boundary `57`.
+
+![All trade intervals](assets/rsi-only-all-trades-timeline.png)
+
+The timeline plot shows all backtest trades as buy-to-sell intervals. Green
+intervals are profitable trades, red intervals are losing trades.
+
+The legacy command-line plotting path also exists:
+
+```powershell
+uv run freqtrade plot-dataframe --userdir user_data --config user_data/config_rsi_only_1h.json --strategy RsiOnlyStrategy --timeframe 1h --pairs XRP/USDT --export-filename user_data/backtest_results/backtest-result-2026-07-14_22-02-06.zip
+```
+
+Freqtrade documentation currently recommends FreqUI over `plot-dataframe` for
+plotting, because the CLI plotting commands are in maintenance mode.
 
 ## Backtest results
 
