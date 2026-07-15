@@ -3,6 +3,5 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/trading/freqtrade" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/trading/user_data/strategies/freqtrade-strategies" vcs="Git" />
   </component>
 </project>

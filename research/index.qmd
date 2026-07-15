@@ -9,7 +9,7 @@ Reproducible explorations for the TimeAnalysis project, grouped by research area
   <a class="research-section-card" href="model-strategies.html">
     <img src="assets/model-zoo-backtest-comparison-cover-pencil.png" alt="Model comparison notebook cover">
     <span class="section-card-body">
-      <span class="section-card-kicker">0 studies</span>
+      <span class="section-card-kicker">1 study</span>
       <span class="section-card-title">Models &amp; Strategies</span>
       <span class="section-card-text">Trading models, forecasting approaches, and backtesting workflows.</span>
     </span>

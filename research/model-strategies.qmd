@@ -1,5 +1,15 @@
 ---
 title: "Models & Strategies"
+listing:
+  contents:
+    - "posts/model-strategies/rsi-only-strategy.qmd"
+  type: grid
+  grid-columns: 3
+  sort: "date desc"
+  categories: true
+  filter-ui: true
+  sort-ui: [date, title]
+  image-placeholder: "assets/research-placeholder-pencil.png"
 page-layout: full
 ---
 
