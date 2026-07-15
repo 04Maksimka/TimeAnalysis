@@ -138,6 +138,15 @@ uv run freqtrade plot-dataframe --userdir user_data --config user_data/config_rs
 Freqtrade documentation currently recommends FreqUI over `plot-dataframe` for
 plotting, because the CLI plotting commands are in maintenance mode.
 
+## In-sample bias warning
+
+The `+60.71%` result below is useful as a first proof-of-concept, but it is
+likely optimistic. The same timerange was used for Hyperopt and for the final
+backtest, so the strategy was trained and evaluated on the same candles. This
+can overfit RSI boundaries and period selection to historical noise. Treat the
+1h result as an in-sample research result, not as evidence that the strategy is
+robust out-of-sample.
+
 ## Backtest results
 
 The final backtest automatically loaded `RsiOnlyStrategy.json`.
@@ -202,6 +211,177 @@ Monthly breakdown:
 | 2026-04 | 0 | 0.000 | 0 / 0 |
 | 2026-05 | 1 | -0.811 | 0 / 1 |
 | 2026-06 | 2 | -1.005 | 1 / 1 |
+
+## 5m train/test extension
+
+To reduce the in-sample bias, the next experiment uses `5m` candles and a fixed
+train/test split:
+
+- exchange: Binance spot;
+- timeframe: `5m`;
+- pairs: the same 10 USDT pairs used by the 1h experiment;
+- data range: `2025-01-01` - `2026-07-14`;
+- train: `2025-01-01` - `2025-12-31`;
+- test: `2026-01-01` - `2026-07-14`;
+- `max_open_trades = 10`;
+- test parameters are not reoptimized.
+
+The new files are:
+
+- `user_data/config_rsi_only_5m.json`;
+- `user_data/config_rsi_risk_managed_5m.json`;
+- `user_data/strategies/RsiOnly5mStrategy.py`;
+- `user_data/strategies/RsiOnlyRiskManaged5mStrategy.py`.
+
+The risk-managed version still uses RSI as the only market indicator, but it is
+not a strict RSI-only exit system anymore. It adds Freqtrade risk controls:
+optimized ROI, stoploss, trailing stop, and protections (`CooldownPeriod`,
+`MaxDrawdown`, `LowProfitPairs`). Final risk-managed backtests were run with
+`--enable-protections`.
+
+Downloaded `5m` data contains 10 `*-5m.feather` files with 160,999 candles per
+pair, from `2025-01-01 00:00:00+00:00` to `2026-07-14 00:30:00+00:00`.
+
+### 5m reproduction commands
+
+```powershell
+uv run freqtrade download-data --userdir user_data --config user_data/config_rsi_risk_managed_5m.json --timeframes 5m --timerange 20250101-20260714
+```
+
+Baseline RSI-only Hyperopt on train:
+
+```powershell
+uv run freqtrade hyperopt --userdir user_data --config user_data/config_rsi_only_5m.json --strategy RsiOnly5mStrategy --timeframe 5m --timerange 20250101-20260101 --spaces buy sell --hyperopt-loss ProfitDrawDownHyperOptLoss -e 300 --random-state 42 --min-trades 50 -j 8 --analyze-per-epoch
+```
+
+Risk-managed Hyperopt on train:
+
+```powershell
+uv run freqtrade hyperopt --userdir user_data --config user_data/config_rsi_risk_managed_5m.json --strategy RsiOnlyRiskManaged5mStrategy --timeframe 5m --timerange 20250101-20260101 --spaces buy sell roi stoploss trailing protection --hyperopt-loss ProfitDrawDownHyperOptLoss -e 300 --random-state 42 --min-trades 50 -j 8 --analyze-per-epoch
+```
+
+The baseline run completed all 300 epochs. The risk-managed search hit Windows
+resource/time limits after saving 41 epochs, so the risk-managed result should
+be treated as a partial pilot optimization, not as a fully comparable 300-epoch
+search.
+
+Backtests:
+
+```powershell
+uv run freqtrade backtesting --userdir user_data --config user_data/config_rsi_only_5m.json --strategy RsiOnly5mStrategy --timeframe 5m --timerange 20250101-20260101 --export trades --breakdown month --cache none --notes rsi_5m_baseline_train
+uv run freqtrade backtesting --userdir user_data --config user_data/config_rsi_only_5m.json --strategy RsiOnly5mStrategy --timeframe 5m --timerange 20260101-20260714 --export trades --breakdown month --cache none --notes rsi_5m_baseline_test
+uv run freqtrade backtesting --userdir user_data --config user_data/config_rsi_risk_managed_5m.json --strategy RsiOnlyRiskManaged5mStrategy --timeframe 5m --timerange 20250101-20260101 --export trades --breakdown month --cache none --enable-protections --notes rsi_5m_risk_train
+uv run freqtrade backtesting --userdir user_data --config user_data/config_rsi_risk_managed_5m.json --strategy RsiOnlyRiskManaged5mStrategy --timeframe 5m --timerange 20260101-20260714 --export trades --breakdown month --cache none --enable-protections --notes rsi_5m_risk_test
+```
+
+### 5m optimized parameters
+
+Baseline RSI-only, trained on 2025:
+
+| Parameter | Value |
+|---|---:|
+| `buy_rsi_period` | 19 |
+| `buy_rsi_lower` | 13 |
+| `sell_rsi_upper` | 79 |
+| `minimal_roi` | `{"0": 100}` |
+| `stoploss` | `-0.99` |
+| `max_open_trades` | 10 |
+
+Risk-managed RSI, partial 41-epoch pilot trained on 2025:
+
+| Parameter | Value |
+|---|---:|
+| `buy_rsi_period` | 22 |
+| `buy_rsi_lower` | 16 |
+| `sell_rsi_upper` | 69 |
+| `minimal_roi` | `{"0": 0.161, "30": 0.029, "83": 0.015, "148": 0}` |
+| `stoploss` | `-0.342` |
+| `trailing_stop` | `true` |
+| `trailing_stop_positive` | `0.184` |
+| `trailing_stop_positive_offset` | `0.186` |
+| `protection_cooldown_stop_duration` | 20 |
+| `protection_max_allowed_drawdown` | 0.089 |
+| `protection_max_drawdown_stop_duration` | 215 |
+| `protection_low_profit_required_profit` | 0.009 |
+| `protection_low_profit_stop_duration` | 36 |
+| `max_open_trades` | 10 |
+
+### 5m baseline RSI-only
+
+| Split | Trades | Profit | Max drawdown | Win rate | Profit factor | Sharpe | Sortino | Best pair | Worst pair |
+|---|---:|---:|---:|---:|---:|---:|---:|---|---|
+| Train | 57 | 53.169 USDT / 53.17% | 2.276 USDT / 2.07% | 66.7% | 10.06 | 1.22 | 8.57 | ADA/USDT, 9.18% | SOL/USDT, 1.58% |
+| Test | 57 | -12.314 USDT / -12.31% | 23.712 USDT / 23.61% | 71.9% | 0.51 | -1.04 | -0.82 | XRP/USDT, 1.26% | SOL/USDT, -2.47% |
+
+The baseline overfit signal is clear: strong train performance did not survive
+the untouched 2026 test window. The win rate stayed high, but the few losing
+trades were large enough to dominate total PnL.
+
+### 5m risk-managed RSI
+
+| Split | Trades | Profit | Max drawdown | Win rate | Profit factor | Sharpe | Sortino | Best pair | Worst pair |
+|---|---:|---:|---:|---:|---:|---:|---:|---|---|
+| Train | 94 | -1.212 USDT / -1.21% | 8.687 USDT / 8.54% | 60.6% | 0.91 | -0.10 | -0.08 | BNB/USDT, 1.60% | DOGE/USDT, -3.49% |
+| Test | 89 | -8.936 USDT / -8.94% | 10.291 USDT / 10.29% | 57.3% | 0.22 | -1.99 | -1.43 | ADA/USDT, 0.54% | AVAX/USDT, -3.08% |
+
+The risk-managed test lost less money and had a smaller account drawdown than
+the baseline test, but it also had a worse profit factor and worse Sharpe /
+Sortino. Because the risk-managed Hyperopt was partial, this is best read as a
+directional robustness check rather than a final verdict on the risk controls.
+
+### 5m test comparison
+
+| Metric | Baseline RSI-only | Risk-managed RSI |
+|---|---:|---:|
+| Test profit | -12.314 USDT / -12.31% | -8.936 USDT / -8.94% |
+| Max account drawdown | 23.712 USDT / 23.61% | 10.291 USDT / 10.29% |
+| Trades | 57 | 89 |
+| Win rate | 71.9% | 57.3% |
+| Profit factor | 0.51 | 0.22 |
+| Sharpe | -1.04 | -1.99 |
+| Sortino | -0.82 | -1.43 |
+| Market change | -34.67% | -34.67% |
+
+Monthly test breakdown:
+
+| Month | Baseline trades | Baseline profit, USDT | Risk trades | Risk profit, USDT |
+|---|---:|---:|---:|---:|
+| 2026-01 | 3 | -0.043 | 18 | -2.057 |
+| 2026-02 | 13 | -22.843 | 22 | -7.840 |
+| 2026-03 | 14 | 3.887 | 11 | -0.201 |
+| 2026-04 | 4 | 1.216 | 11 | -0.145 |
+| 2026-05 | 10 | 1.144 | 12 | 0.068 |
+| 2026-06 | 5 | 1.426 | 12 | 1.306 |
+| 2026-07 | 8 | 2.899 | 3 | -0.067 |
+
+![5m test equity curve](assets/rsi-5m-equity-baseline-vs-risk-test.png)
+
+The equity curve shows the main difference: risk controls reduced the February
+capital drop, while the baseline recovered more later in the test window but
+still finished lower overall.
+
+![5m test trade timeline](assets/rsi-5m-trade-timeline-test.png)
+
+The timeline shows that the risk-managed version trades more frequently and
+closes many positions quickly through ROI/trailing/protection-influenced
+behavior. The baseline trades less often but holds some losing February
+positions longer.
+
+![Risk-managed best test pair markers](assets/rsi-5m-risk-best-pair-trades-test.png)
+
+The best risk-managed test pair was `ADA/USDT`, but even that pair only
+contributed `+0.537 USDT` (`+0.54%`). This reinforces that the out-of-sample edge
+was weak in the 2026 test window.
+
+### 5m conclusion
+
+The train/test split changes the interpretation materially. The original 1h
+result and the 5m baseline train result both look attractive in-sample, but the
+untouched 2026 test window is negative. The risk-managed variant reduced test
+drawdown from `23.61%` to `10.29%` and improved absolute test PnL from `-12.31%`
+to `-8.94%`, but it did not produce a profitable or statistically convincing
+strategy. The next research step should be a proper walk-forward optimization
+with multiple rolling windows, not a single train/test split.
 
 ## Notes and limitations
 

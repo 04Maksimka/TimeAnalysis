@@ -1,0 +1,39 @@
+{
+  "strategy_name": "RsiOnlyRiskManaged5mStrategy",
+  "params": {
+    "max_open_trades": {
+      "max_open_trades": 10
+    },
+    "buy": {
+      "buy_rsi_lower": 16,
+      "buy_rsi_period": 22
+    },
+    "sell": {
+      "sell_rsi_upper": 69
+    },
+    "protection": {
+      "protection_cooldown_stop_duration": 20,
+      "protection_low_profit_required_profit": 0.009,
+      "protection_low_profit_stop_duration": 36,
+      "protection_max_allowed_drawdown": 0.089,
+      "protection_max_drawdown_stop_duration": 215
+    },
+    "roi": {
+      "0": 0.161,
+      "30": 0.029,
+      "83": 0.015,
+      "148": 0
+    },
+    "stoploss": {
+      "stoploss": -0.342
+    },
+    "trailing": {
+      "trailing_stop": true,
+      "trailing_stop_positive": 0.184,
+      "trailing_stop_positive_offset": 0.186,
+      "trailing_only_offset_is_reached": true
+    }
+  },
+  "ft_stratparam_v": 1,
+  "export_time": "2026-07-15 08:02:31.786296+00:00"
+}
